@@ -1,47 +1,65 @@
-# IKAPMI Regional Bandung Web
+# IKAPMI Regional Bandung — Website Resmi
 
 Website resmi **Ikatan Keluarga & Alumni Pesantren Modern Ummul Quro Al-Islami (IKAPMI) Regional Bandung**.
 
 Platform digital pusat informasi, jejaring alumni, database anggota, dan panduan santri baru yang melanjutkan studi di perguruan tinggi wilayah Bandung Raya.
 
----
-
-## 🌟 Fitur Utama
-
-- **Hero & Identity:** Pengenalan organisasi dan profil pengurus dengan interactive ID Card rail 3D.
-- **Tentang Kami:** Visi, misi, sejarah, dan nilai-nilai perjuangan santri di perantauan.
-- **Linimasa Kepengurusan:** Peta estafet kepengurusan lintas tahun. Tiap titik dapat diklik untuk membuka modal berisi struktur pengurus lengkap dengan badge card 3D flip per anggota. Periode aktif ditandai kabinet, periode berakhir ditandai cap DEMISIONER. Data diambil dari Sanity CMS.
-- **Jejak Prestasi:** Kartu prestasi anggota & alumni dengan desain biru bertingkat, medal rank otomatis (Juara 1–5), animasi hover spring, dan data dari Sanity CMS.
-- **Warta & Artikel:** Kabar terkini dengan modal reader bergaya editorial — cover photo hero, overlay gelap, metadata penulis, dan teks artikel penuh.
-- **Direktori Kampus & Jejaring Alumni:**
-  - Pemetaan kampus (UIN Sunan Gunung Djati, UNPAD, UPI, ITB, Telkom University, UNISBA, POLBAN, UNPAS).
-  - Filter kategori PTN & PTS, pencarian jurusan, serta tombol langsung hubungi koordinator kampus.
-- **Pusat Panduan Santri Baru ke Bandung:**
-  - **Jalur Masuk Kampus:** Panduan interaktif pemilihan kampus dengan logo resmi dan daftar jalur masuk terperinci (SNBP, SNBT, SPAN-PTKIN, UM-PTKIN, Mandiri, dan beasiswa Tahfidz Al-Qur'an).
-  - **Panduan Wilayah Kost Santri:** Pemetaan area hunian dan rekomendasi kost strategis dekat masjid dan kampus.
-  - **Informasi Beasiswa:** Ragam beasiswa S1 (KIP-K, JFLS, BSI Scholarship, Beasiswa Hafiz).
-  - **Pendampingan Kakak Tingkat:** Konsultasi adaptasi kuliah dan kehidupan di Bandung.
-- **Dokumentasi & Galeri Kegiatan:** Dokumentasi Rakerda, Mureg, dan temu akbar alumni.
+🌐 **Live:** [maryam-silva.github.io](https://maryam-silva.github.io)
 
 ---
 
-## 🗄️ CMS (Sanity)
+## Bagian & Fitur
 
-Konten dinamis dikelola lewat **Sanity CMS** (projectId: `86ednba2`, dataset: `production`).
-
-Tipe konten yang terhubung:
-- `kepengurusan` — data pengurus per periode (nama, jabatan, divisi, foto)
-- `prestasi` — data prestasi anggota (nama, judul, tanggal, foto)
-- `warta` — artikel & berita (judul, isi portable text, foto cover, kategori)
-- `beasiswa` — info beasiswa yang tersedia
-
-Sanity Studio tersedia di folder `ikapmibandung-website/` (tidak di-track git; deploy terpisah via `npx sanity deploy`).
+| Section | Deskripsi |
+|---|---|
+| **Beranda (Hero)** | Pengenalan organisasi, logo interaktif, tagline, dan statistik singkat |
+| **Tentang Kami** | Visi, misi, sejarah, dan nilai-nilai perjuangan santri di perantauan |
+| **Pelindung Organisasi** | Profil pelindung & pembina organisasi dalam tampilan zigzag 3D card |
+| **Struktur Kepengurusan** | Kartu ID pengurus aktif per bidang dengan layout rail horizontal |
+| **Panduan Santri Baru** | Multi-tab: Jalur Masuk Kampus (SNBP, SNBT, SPAN-PTKIN, Mandiri, dll), Kost Santri, Beasiswa |
+| **Direktori Kampus** | Pemetaan 8+ kampus di Bandung Raya; filter PTN/PTS, pencarian jurusan, kontak koordinator |
+| **Dokumentasi** | Galeri foto kegiatan Rakerda, Mureg, dan temu akbar alumni |
+| **Galeri** | Grid foto kegiatan interaktif dengan lightbox |
+| **Warta & Artikel** | Berita terkini dengan modal reader bergaya editorial (cover hero, overlay gelap, teks penuh) |
+| **Kiprah Alumni** | Profil dan kontribusi alumni aktif; data dari Sanity CMS |
+| **Jejak Prestasi** | Kartu prestasi anggota & alumni — medal rank otomatis, animasi hover spring; data dari Sanity CMS |
+| **Linimasa Kepengurusan** | Peta estafet kepengurusan lintas tahun; klik titik untuk membuka struktur pengurus lengkap dengan badge card 3D flip; data dari Sanity CMS |
+| **Ulasan** | Testimoni anggota dan alumni |
+| **Database Alumni** | Formulir pendaftaran alumni ke Google Sheets (via Google Apps Script) |
+| **Kontak** | Info kontak, alamat, Instagram, dan tombol WhatsApp pengurus |
 
 ---
 
-## 🔨 Build Komponen React
+## Stack Teknis
 
-Komponen UI (`prestasi-section.tsx`, `kepengurusan-section.tsx`) di-bundle dengan **esbuild** (React sudah di-bundle, tidak perlu CDN):
+| Komponen | Teknologi |
+|---|---|
+| Halaman utama | HTML + Tailwind CSS (via CDN) + vanilla JS |
+| Komponen React | TypeScript + React 18 (di-bundle via esbuild) |
+| CMS | [Sanity.io](https://sanity.io) v3 — projectId `86ednba2`, dataset `production` |
+| Backend alumni | Google Apps Script + Google Sheets |
+| Hosting | GitHub Pages (static) |
+| CI/CD | GitHub Actions → lftp mirror ke server FTP (jika dikonfigurasi) |
+
+---
+
+## Konten Dinamis (Sanity CMS)
+
+Konten berikut diambil live dari Sanity API:
+
+- **`kepengurusan`** — data pengurus per periode (nama, jabatan, divisi, foto individu, foto bersama)
+- **`prestasi`** — prestasi anggota/alumni (nama, judul, tanggal, foto)
+- **`warta`** — artikel & berita (judul, isi portable text, foto cover, kategori, tanggal)
+- **`beasiswa`** — info beasiswa yang tersedia (nama, deskripsi, syarat, link)
+- **`kiprahAlumni`** — profil alumni (nama, kampus, angkatan, foto, cerita)
+
+Sanity Studio tersedia di folder `ikapmibandung-website/` (tidak di-track git; deploy terpisah via `npx sanity deploy` dari dalam folder tersebut).
+
+---
+
+## Build Komponen React
+
+Komponen UI (`prestasi-section.tsx`, `kepengurusan-section.tsx`, `kiprah-alumni.tsx`) di-bundle menggunakan **esbuild** — React sudah di-bundle langsung (tidak butuh CDN):
 
 ```bash
 # Prestasi section
@@ -49,15 +67,16 @@ npx esbuild src/mount_prestasi.tsx --bundle --outfile=js/prestasi.bundle.js --lo
 
 # Kepengurusan section
 npx esbuild src/mount_kepengurusan.tsx --bundle --outfile=js/kepengurusan.bundle.js --loader:.tsx=tsx
+
+# Kiprah alumni section (jika ada perubahan)
+npx esbuild src/mount_kiprah_alumni.tsx --bundle --outfile=js/kiprah-alumni.bundle.js --loader:.tsx=tsx
 ```
 
 Setelah build, naikkan versi cache-bust di `index.html` pada tag `<script src="js/X.bundle.js?v=...">`.
 
 ---
 
-## 🚀 Menjalankan Secara Lokal
-
-Untuk menjalankan website secara lokal:
+## Menjalankan Secara Lokal
 
 ```bash
 # Menggunakan Python HTTP Server
@@ -67,14 +86,40 @@ python -m http.server 5173
 npx serve .
 ```
 
-Buka `http://localhost:5173` pada browser Anda.
+Buka `http://localhost:5173` pada browser.
+
+> **Catatan:** Konten dari Sanity CMS tidak muncul di localhost karena CORS hanya mengizinkan domain produksi. Gunakan fallback data statis (sudah tersedia di setiap komponen) untuk pengembangan lokal, atau tambahkan `http://localhost:5173` ke daftar CORS di [sanity.io/manage](https://sanity.io/manage).
 
 ---
 
-## 👨‍💻 Kontributor
+## Struktur Folder
 
-- **Azis Panji** ([@Azispanji24](https://github.com/Azispanji24)) - *Bidang Komunikasi & Informasi (Kominfo) IKAPMI Bandung*
-- Email: `azispanji92@gmail.com`
+```
+ikapmi-bandung-web-main/
+├── index.html                  # Halaman utama
+├── css/
+│   └── style.css               # Styling kustom
+├── js/
+│   ├── app.js                  # Logika utama (warta, beasiswa, kampus, dll)
+│   ├── sanity.js               # Sanity client & fetch helpers
+│   ├── prestasi.bundle.js      # Bundle React — section Prestasi
+│   ├── kepengurusan.bundle.js  # Bundle React — section Kepengurusan
+│   └── kiprah-alumni.bundle.js # Bundle React — section Kiprah Alumni
+├── src/
+│   ├── mount_*.tsx             # Entry point esbuild per komponen
+│   └── components/ui/          # Komponen React (TSX)
+├── assets/                     # Logo, foto, dan aset statis
+├── ikapmibandung-website/      # Sanity Studio (tidak di-track git)
+└── GoogleAppsScript_*.js       # Backend Google Apps Script (referensi)
+```
+
+---
+
+## Kontributor
+
+- **Maryam Silva** ([@maryam-silva](https://github.com/maryam-silva)) — *Web Development*
+- **Azis Panji** ([@Azispanji24](https://github.com/Azispanji24)) — *Bidang Komunikasi & Informasi (Kominfo) IKAPMI Bandung*
+  - Email: `azispanji92@gmail.com`
 
 ---
 
