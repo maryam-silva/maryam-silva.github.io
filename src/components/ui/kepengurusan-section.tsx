@@ -53,136 +53,164 @@ function groupByDivisi(pengurus: PengurusItem[]) {
   return map;
 }
 
-// Flip card — dark navy, same vibe as existing lanyard section
+// Flip card — matches existing lanyard section style (screenshot 3)
 function BadgeCard({ p, isChief = false, isDemisioner = false }: { p: PengurusItem; isChief?: boolean; isDemisioner?: boolean }) {
   const [flipped, setFlipped] = React.useState(false);
   const initials = p.nama.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
-  const W = isChief ? 148 : 124;
-  const H = isChief ? 215 : 185;
+  const W = isChief ? 185 : 162;
+  const H = isChief ? 288 : 258;
 
-  const front: React.CSSProperties = {
+  const cardBase: React.CSSProperties = {
     position: "absolute", inset: 0,
     backfaceVisibility: "hidden",
     WebkitBackfaceVisibility: "hidden" as any,
-    borderRadius: 12,
-    background: "#0b1930",
-    border: isChief ? "1.5px solid rgba(201,138,44,0.65)" : "1px solid rgba(255,255,255,0.08)",
-    boxShadow: isChief ? "0 8px 32px rgba(201,138,44,0.18)" : "0 4px 20px rgba(0,0,0,0.35)",
+    borderRadius: 14,
     overflow: "hidden",
     display: "flex", flexDirection: "column", alignItems: "center",
   };
 
-  const back: React.CSSProperties = {
-    ...front,
-    transform: "rotateY(180deg)",
-    background: isChief ? "linear-gradient(150deg,#1c1000,#2e1800)" : "linear-gradient(150deg,#071020,#0d1f3c)",
-    justifyContent: "center", gap: 10, padding: "16px 10px",
-  };
-
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: W }}>
-      {/* Lanyard string */}
+      {/* Lanyard cord — woven look */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: -1 }}>
-        <div style={{ width: 2, height: 22, background: "linear-gradient(to bottom, #374151, #94a3b8)" }} />
-        <div style={{ width: 20, height: 9, borderRadius: 2, background: "linear-gradient(90deg,#94a3b8,#e2e8f0 50%,#94a3b8)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }} />
+        <div style={{
+          width: 3, height: 28,
+          background: "repeating-linear-gradient(180deg,#334155 0px,#334155 3px,#1e293b 3px,#1e293b 6px)",
+        }} />
+        <div style={{
+          width: 24, height: 11, borderRadius: 3,
+          background: "linear-gradient(90deg,#94a3b8,#e2e8f0 45%,#94a3b8)",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3)",
+        }} />
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "radial-gradient(circle at 35% 35%,#cbd5e1,#64748b)", boxShadow: "0 2px 4px rgba(0,0,0,0.5)", marginTop: 2 }} />
       </div>
 
-      {/* 3D card */}
-      <div
-        style={{ width: W, height: H, perspective: 900, cursor: "pointer" }}
-        onClick={() => setFlipped(f => !f)}
-      >
+      {/* 3D flip wrapper */}
+      <div style={{ width: W, height: H, perspective: 900, cursor: "pointer" }} onClick={() => setFlipped(f => !f)}>
         <div style={{
           position: "relative", width: "100%", height: "100%",
           transformStyle: "preserve-3d",
-          transition: "transform 0.55s cubic-bezier(.34,1.4,.64,1)",
+          transition: "transform 0.6s cubic-bezier(.34,1.4,.64,1)",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}>
 
-          {/* ── FRONT ── */}
-          <div style={front}>
+          {/* ── FRONT ── matches lanyard section card exactly */}
+          <div style={{
+            ...cardBase,
+            background: "linear-gradient(170deg,#0f1f3d 0%,#0a1628 60%,#060e1e 100%)",
+            border: isChief ? "1.5px solid rgba(201,138,44,0.6)" : "1px solid rgba(255,255,255,0.07)",
+            boxShadow: isChief
+              ? "0 12px 40px rgba(201,138,44,0.2), 0 4px 16px rgba(0,0,0,0.5)"
+              : "0 8px 32px rgba(0,0,0,0.4)",
+          }}>
             {/* dot pattern */}
-            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.055) 1px,transparent 1px)", backgroundSize: "13px 13px" }} />
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.05) 1px,transparent 1px)", backgroundSize: "14px 14px" }} />
 
-            {/* header stripe */}
+            {/* top header */}
             <div style={{
-              width: "100%", padding: "7px 0 5px", display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
-              background: isChief ? "linear-gradient(135deg,rgba(201,138,44,0.28),rgba(201,138,44,0.1))" : "rgba(255,255,255,0.03)",
-              borderBottom: isChief ? "1px solid rgba(201,138,44,0.3)" : "1px solid rgba(255,255,255,0.05)",
+              width: "100%", padding: "9px 10px 7px",
+              display: "flex", alignItems: "center", gap: 6,
+              background: isChief ? "rgba(201,138,44,0.12)" : "rgba(255,255,255,0.025)",
+              borderBottom: `1px solid ${isChief ? "rgba(201,138,44,0.25)" : "rgba(255,255,255,0.06)"}`,
               position: "relative", zIndex: 1,
             }}>
-              <div style={{ width: 13, height: 13, borderRadius: "50%", background: "rgba(255,255,255,0.14)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
+              {/* logo circle */}
+              <div style={{ width: 18, height: 18, borderRadius: "50%", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 10, height: 10, borderRadius: "50%", background: isChief ? "rgba(201,138,44,0.7)" : "rgba(147,197,253,0.5)" }} />
               </div>
-              <span style={{ fontSize: 7, fontWeight: 900, letterSpacing: "0.12em", color: isChief ? "#c98a2c" : "rgba(255,255,255,0.45)", textTransform: "uppercase" }}>
+              <span style={{ fontSize: 7.5, fontWeight: 900, letterSpacing: "0.1em", color: isChief ? "#c98a2c" : "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
                 IKAPMI BANDUNG
               </span>
             </div>
 
             {/* photo */}
-            <div style={{ position: "relative", zIndex: 1, marginTop: 13, marginBottom: 10 }}>
+            <div style={{ position: "relative", zIndex: 1, marginTop: 16, marginBottom: 12 }}>
               <div style={{
-                width: isChief ? 70 : 58, height: isChief ? 70 : 58, borderRadius: "50%",
-                border: isChief ? "2.5px solid #c98a2c" : "2px solid rgba(255,255,255,0.2)",
-                background: "rgba(255,255,255,0.07)", overflow: "hidden",
-                display: "flex", alignItems: "center", justifyContent: "center",
+                width: isChief ? 90 : 78, height: isChief ? 90 : 78, borderRadius: "50%",
+                border: isChief ? "3px solid #c98a2c" : "2px solid rgba(255,255,255,0.18)",
+                background: "linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))",
+                overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: isChief ? "0 0 0 4px rgba(201,138,44,0.1)" : "none",
               }}>
                 {p.foto ? (
                   <img src={sanityImageUrl(p.foto)} alt={p.nama} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
                 ) : (
-                  <span style={{ fontWeight: 900, color: isChief ? "#c98a2c" : "#93c5fd", fontSize: isChief ? 22 : 18 }}>{initials}</span>
+                  <span style={{ fontWeight: 900, color: isChief ? "#c98a2c" : "#93c5fd", fontSize: isChief ? 28 : 24 }}>{initials}</span>
                 )}
               </div>
             </div>
 
-            {/* name + role */}
-            <div style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "0 8px" }}>
-              <p style={{ fontWeight: 700, color: "#fff", fontSize: isChief ? 10.5 : 9, lineHeight: 1.3, marginBottom: 3 }}>{p.nama}</p>
-              <p style={{ fontWeight: 700, color: isChief ? "#c98a2c" : "#93c5fd", fontSize: 7.5, letterSpacing: "0.08em", textTransform: "uppercase" }}>{p.jabatan}</p>
+            {/* name */}
+            <p style={{ position: "relative", zIndex: 1, fontWeight: 700, color: "#fff", fontSize: isChief ? 13 : 11.5, lineHeight: 1.3, textAlign: "center", padding: "0 10px", marginBottom: 5 }}>{p.nama}</p>
+
+            {/* jabatan + role chip */}
+            <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "0 8px" }}>
+              <p style={{ color: isChief ? "#c98a2c" : "#93c5fd", fontSize: isChief ? 9 : 8, fontWeight: 700, letterSpacing: "0.06em", textAlign: "center", lineHeight: 1.3 }}>{p.jabatan}</p>
+              {p.divisi && p.divisi !== "Pimpinan" && p.divisi !== "Pimpinan Umum" && (
+                <span style={{
+                  fontSize: 7, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4, padding: "2px 6px",
+                }}>{p.divisi}</span>
+              )}
             </div>
 
-            {/* DEMISIONER stamp */}
-            {isDemisioner && (
-              <div style={{
-                position: "absolute", top: "50%", left: "50%",
-                transform: "translate(-50%,-50%) rotate(-22deg)",
-                border: "2px solid rgba(239,68,68,0.8)", borderRadius: 4,
-                padding: "3px 8px", zIndex: 10, pointerEvents: "none",
-                background: "rgba(239,68,68,0.06)",
-              }}>
-                <span style={{ color: "rgba(239,68,68,0.9)", fontSize: 10, fontWeight: 900, letterSpacing: "0.14em", fontFamily: "monospace", textTransform: "uppercase" }}>
-                  DEMISIONER
-                </span>
-              </div>
-            )}
+            {/* bottom: demisioner OR barcode-style lines */}
+            <div style={{ position: "relative", zIndex: 1, marginTop: "auto", width: "100%", padding: "0 10px 10px" }}>
+              {isDemisioner ? (
+                <div style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.4)",
+                  borderRadius: 6, padding: "5px 0",
+                }}>
+                  <span style={{ color: "rgba(239,68,68,0.9)", fontSize: 9, fontWeight: 900, letterSpacing: "0.18em", textTransform: "uppercase", fontFamily: "monospace" }}>DEMISIONER</span>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: 1, height: 18 }}>
+                    {[2,1,3,1,2,1,2,3,1,2,1,2,3,1,2].map((w, i) => (
+                      <div key={i} style={{ width: w * 1.4, height: `${55 + (i % 4) * 12}%`, background: "rgba(255,255,255,0.35)", borderRadius: 1 }} />
+                    ))}
+                  </div>
+                  <span style={{ fontSize: 6.5, color: "rgba(255,255,255,0.2)", fontFamily: "monospace", letterSpacing: "0.08em" }}>IKAPMI-BDG</span>
+                </div>
+              )}
+            </div>
 
             {/* flip hint */}
-            <span style={{ position: "absolute", bottom: 5, right: 7, fontSize: 7, color: "rgba(255,255,255,0.18)", fontStyle: "italic", zIndex: 1 }}>↻</span>
+            <span style={{ position: "absolute", bottom: 7, right: 8, fontSize: 8, color: "rgba(255,255,255,0.15)", zIndex: 2 }}>↻</span>
           </div>
 
           {/* ── BACK ── */}
-          <div style={back}>
-            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "10px 10px" }} />
+          <div style={{
+            ...cardBase,
+            transform: "rotateY(180deg)",
+            background: isChief ? "linear-gradient(150deg,#1c1000,#2e1a00)" : "linear-gradient(150deg,#060e20,#0d1f40)",
+            border: isChief ? "1.5px solid rgba(201,138,44,0.4)" : "1px solid rgba(255,255,255,0.06)",
+            boxShadow: isChief ? "0 12px 40px rgba(201,138,44,0.15)" : "0 8px 32px rgba(0,0,0,0.4)",
+            justifyContent: "center", gap: 12, padding: "20px 12px",
+          }}>
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.035) 1px,transparent 1px)", backgroundSize: "11px 11px" }} />
 
-            <div style={{ position: "relative", zIndex: 1, width: 44, height: 44, borderRadius: "50%", border: `1.5px solid ${isChief ? "rgba(201,138,44,0.4)" : "rgba(255,255,255,0.12)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.05)" }}>
-              <span style={{ fontSize: 20 }}>🕌</span>
+            <div style={{ position: "relative", zIndex: 1, width: 50, height: 50, borderRadius: "50%", border: `1.5px solid ${isChief ? "rgba(201,138,44,0.35)" : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.04)" }}>
+              <span style={{ fontSize: 24 }}>🕌</span>
             </div>
 
-            <div style={{ position: "relative", zIndex: 1, textAlign: "center", padding: "0 8px" }}>
+            <div style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
               {p.divisi && (
-                <p style={{ color: isChief ? "#c98a2c" : "#93c5fd", fontSize: 8, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 5 }}>{p.divisi}</p>
+                <p style={{ color: isChief ? "#c98a2c" : "#93c5fd", fontSize: 9, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>{p.divisi}</p>
               )}
-              <p style={{ color: "#fff", fontSize: 10, fontWeight: 700, lineHeight: 1.3, marginBottom: 4 }}>{p.nama}</p>
-              <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 8 }}>{p.jabatan}</p>
+              <p style={{ color: "#fff", fontSize: 12, fontWeight: 700, lineHeight: 1.4, marginBottom: 5 }}>{p.nama}</p>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 9, lineHeight: 1.4 }}>{p.jabatan}</p>
             </div>
 
             {isDemisioner && (
-              <div style={{ position: "relative", zIndex: 1, border: "1px solid rgba(239,68,68,0.5)", borderRadius: 100, padding: "2px 10px" }}>
-                <span style={{ color: "rgba(239,68,68,0.8)", fontSize: 7.5, fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase" }}>Periode Berakhir</span>
+              <div style={{ position: "relative", zIndex: 1, border: "1px solid rgba(239,68,68,0.4)", borderRadius: 100, padding: "3px 12px", background: "rgba(239,68,68,0.08)" }}>
+                <span style={{ color: "rgba(239,68,68,0.8)", fontSize: 8, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>Periode Berakhir</span>
               </div>
             )}
 
-            <span style={{ position: "absolute", bottom: 5, right: 7, fontSize: 7, color: "rgba(255,255,255,0.18)", fontStyle: "italic", zIndex: 1 }}>↻</span>
+            <span style={{ position: "absolute", bottom: 7, right: 8, fontSize: 8, color: "rgba(255,255,255,0.15)", zIndex: 2 }}>↻</span>
           </div>
         </div>
       </div>
