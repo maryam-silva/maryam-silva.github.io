@@ -6,42 +6,50 @@ export interface AlumnusProfile {
   name: string;
   batch: string;
   role: string;
+  position?: string;
 }
 
-const KIPRAH_ALUMNI: AlumnusProfile[] = [
-  {
-    image: "assets/kiprah/rizzaldy-satria-wiwaha.jpg",
-    name: "Dr. Rizzaldy Satria Wiwaha",
-    batch: "Angkatan 9 PMUQI",
-    role: "Dosen UIN SGD Bandung",
-  },
-  {
-    image: "assets/kiprah/pipit-sugiarto.jpg",
-    name: "Pipit Sugiarto, M.Pd.",
-    batch: "Angkatan 9 PMUQI",
-    role: "Dosen UIN SGD Bandung",
-  },
-  {
-    image: "assets/kiprah/ahmad-zaeni-dahlan.jpg",
-    name: "Ust. Ahmad Zaeni Dahlan, M.Pd.",
-    batch: "Angkatan 9 PMUQI",
-    role: "Dosen UIN SGD Bandung",
-  },
-  {
-    image: "assets/kiprah/yeyen.jpeg",
-    name: "Yeyen Hamidah, M.Pd.",
-    batch: "Angkatan 8 PMUQI",
-    role: "Dosen Telkom University",
-  },
-  {
-    image: "assets/kiprah/diki.jpeg",
-    name: "Diki Andriana",
-    batch: "Angkatan 12 PMUQI",
-    role: "Kepala Kantor DPC PKB Kab. Bandung",
-  },
+const FALLBACK: AlumnusProfile[] = [
+  { image: "assets/kiprah/rizzaldy-satria-wiwaha.jpg", name: "Dr. Rizzaldy Satria Wiwaha", batch: "Angkatan 9 PMUQI", role: "Dosen UIN SGD Bandung" },
+  { image: "assets/kiprah/pipit-sugiarto.jpg", name: "Pipit Sugiarto, M.Pd.", batch: "Angkatan 9 PMUQI", role: "Dosen UIN SGD Bandung" },
+  { image: "assets/kiprah/ahmad-zaeni-dahlan.jpg", name: "Ust. Ahmad Zaeni Dahlan, M.Pd.", batch: "Angkatan 9 PMUQI", role: "Dosen UIN SGD Bandung" },
+  { image: "assets/kiprah/yeyen.jpeg", name: "Yeyen Hamidah, M.Pd.", batch: "Angkatan 8 PMUQI", role: "Dosen Telkom University", position: "center" },
+  { image: "assets/kiprah/diki.jpeg", name: "Diki Andriana", batch: "Angkatan 12 PMUQI", role: "Kepala Kantor DPC PKB Kab. Bandung" },
 ];
 
+function sanityImageUrl(ref: string) {
+  if (!ref) return "";
+  const id = ref.replace("image-", "").replace(/-([a-zA-Z0-9]+)$/, ".$1");
+  return `https://cdn.sanity.io/images/86ednba2/production/${id}`;
+}
+
 export function KiprahAlumniSection() {
+  const [items, setItems] = React.useState<AlumnusProfile[]>(FALLBACK);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if ((window as any).Sanity?.fetchKiprahAlumni) {
+      (window as any).Sanity.fetchKiprahAlumni()
+        .then((data: any[]) => {
+          if (data && data.length > 0) {
+            setItems(data.map((d) => ({
+              image: d.foto ? sanityImageUrl(d.foto) : "",
+              name: d.nama,
+              batch: d.angkatan || "",
+              role: d.peran || "",
+              position: d.fotoPosition || "top",
+            })));
+          }
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const displayItems = loading ? FALLBACK : (items.length > 0 ? items : FALLBACK);
+
   return (
     <section
       id="kiprah"
@@ -66,7 +74,7 @@ export function KiprahAlumniSection() {
           <div className="pointer-events-none absolute top-0 right-0 z-10 h-full w-16 sm:w-32 bg-gradient-to-l from-[#081326] to-transparent" />
 
           <Marquee className="[--gap:1.5rem] [--duration:16s]" pauseOnHover repeat={4}>
-            {KIPRAH_ALUMNI.map((member) => (
+            {displayItems.map((member) => (
               <div
                 className="group flex w-64 shrink-0 flex-col"
                 key={member.name}
@@ -74,9 +82,8 @@ export function KiprahAlumniSection() {
                 <div className="relative h-[23rem] w-full overflow-hidden rounded-2xl bg-[#0d1f3c] border border-white/10 shadow-xl">
                   <img
                     alt={member.name}
-                    className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 ${
-                      member.name.includes("Yeyen") ? "object-center" : "object-top"
-                    }`}
+                    className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-105`}
+                    style={{ objectPosition: member.position === "center" ? "center" : "top" }}
                     src={member.image}
                   />
                   <div className="absolute bottom-0 w-full rounded-lg bg-white/90 backdrop-blur-sm p-3 text-left">

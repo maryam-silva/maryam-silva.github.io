@@ -61,6 +61,10 @@
     return sanityFetch('*[_type == "jalurKampus"] | order(urutan asc) { _id, namaKampus, "kampusId": kampusId.current, badge, lokasi, deskripsi, linkPortalPmb, jalur, urutan, "logo": logo.asset._ref }');
   }
 
+  async function fetchKiprahAlumni() {
+    return sanityFetch('*[_type == "kiprahAlumni" && tampilkan != false] | order(urutan asc) { _id, nama, angkatan, peran, fotoPosition, "foto": foto.asset._ref }');
+  }
+
   async function fetchBeranda() {
     const result = await sanityFetch('*[_type == "beranda"][0] { taglineSeries, taglinePlain, leadText, stats }');
     return Array.isArray(result) ? result[0] : result;
@@ -86,6 +90,7 @@
     fetchPelindung,
     fetchBeasiswa,
     fetchJalurKampus,
+    fetchKiprahAlumni,
     fetchBeranda,
     fetchTentang,
     fetchKontak,
