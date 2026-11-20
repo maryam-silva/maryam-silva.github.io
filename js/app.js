@@ -2,18 +2,37 @@
  * IKAPMI Regional Bandung - Official Web Application Logic
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initNavbar();
   initHeroInteractiveCard();
   initOrgFilter();
   initCampusFilter();
   initMentorshipTabs();
-  initBeasiswaCatalog();
-  initJalurKampus();
   initPerspectiveTunnelHero();
   initArticleModal();
   initRegistrationForm();
   initScrollAnimations();
+
+  // Fetch Sanity data dan update sebelum init sections yang data-driven
+  if (window.Sanity) {
+    try {
+      const [beasiswaItems, jalurItems] = await Promise.all([
+        window.Sanity.fetchBeasiswa(),
+        window.Sanity.fetchJalurKampus(),
+      ]);
+      if (beasiswaItems && beasiswaItems.length > 0) {
+        SCHOLARSHIPS_DATA = _transformBeasiswa(beasiswaItems);
+      }
+      if (jalurItems && jalurItems.length > 0) {
+        CAMPUS_JALUR_DATA = _transformJalurKampus(jalurItems);
+      }
+    } catch (e) {
+      // Gunakan data hardcode sebagai fallback
+    }
+  }
+
+  initBeasiswaCatalog();
+  initJalurKampus();
 });
 
 /* ----------------------------------------------------
@@ -870,7 +889,9 @@ function initArticleModal() {
    6. FORMULIR REGISTRASI DATABASE ALUMNI (GOOGLE APPS SCRIPT + SHEETS)
 ---------------------------------------------------- */
 // Tempel URL Web App Google Apps Script (/exec) dari GoogleAppsScript_DatabaseAlumniBackend.js di sini:
-const ALUMNI_DB_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdiYcLxDtRcussP-J11bhsN8wJXH06pWWoLBGvFyx_NO3zgaSp_uw0YwniFNk1cq4/exec';
+const SANITY_PROJECT_ID = '86ednba2';
+const SANITY_DATASET = 'production';
+const SANITY_ALUMNI_TOKEN = 'sk1sP8Oi4gN9D8PmgYOnm4K3zslhQC0IvycymbjpEC0DaqWgED5gUR6wkCp3wbT8Pbg8SuyrCpRB9vBoZp7ctEA8jOnTfgZaaSM3Z77ntwweMm135T3cFqiU0OlMoYuiKWyGXJNDJx5hwsqf20U6M54YOgx3teB3nCEMtVSWGso6JIKgqour';
 
 function initRegistrationForm() {
   const form = document.getElementById('alumni-reg-form');
@@ -1045,33 +1066,35 @@ function initRegistrationForm() {
         registeredAt: new Date().toISOString()
       };
 
-      const hasCloudUrl = ALUMNI_DB_SCRIPT_URL && ALUMNI_DB_SCRIPT_URL.startsWith('http');
-
-      if (!hasCloudUrl) {
-        saveLocalBackup(newEntry);
-        form.reset();
-        syncSelectPlaceholder(kampusInput);
-        const localNotice = `Data ${nama} tersimpan sementara di browser ini. Tempel URL Google Apps Script di js/app.js agar otomatis terkirim ke Google Sheets.`;
-        showStatusBanner(localNotice, 'warning');
-        showToast(localNotice, 'warning');
-        return;
-      }
-
       setSubmitting(true);
       try {
-        const response = await fetch(ALUMNI_DB_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'cors',
-          redirect: 'follow',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(newEntry)
-        });
+        const doc = {
+          _type: 'alumni',
+          nama,
+          angkatan,
+          whatsapp,
+          kampus,
+          jurusan,
+          status,
+          domisili,
+          tanggalDaftar: new Date().toISOString()
+        };
 
-        const result = await response.json();
-        if (!response.ok || result.status !== 'success') {
-          throw new Error(result.message || 'Server mengembalikan status gagal.');
+        const response = await fetch(
+          `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/mutate/${SANITY_DATASET}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SANITY_ALUMNI_TOKEN}`
+            },
+            body: JSON.stringify({ mutations: [{ create: doc }] })
+          }
+        );
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.message || 'Gagal menyimpan data.');
         }
 
         saveLocalBackup(newEntry);
@@ -1081,7 +1104,7 @@ function initRegistrationForm() {
         showStatusBanner(successMsg, 'success');
         showToast(successMsg, 'success');
       } catch (err) {
-        const failMsg = 'Gagal mengirim data ke Google Sheets. Periksa koneksi internet Anda lalu klik Simpan Data kembali.';
+        const failMsg = 'Gagal menyimpan data. Periksa koneksi internet Anda lalu coba kembali.';
         showStatusBanner(failMsg, 'error');
         showToast(failMsg, 'error');
         console.warn('Alumni registration submit error:', err);
@@ -1290,7 +1313,7 @@ function initHeroInteractiveCard() {
 /* ----------------------------------------------------
    JALUR MASUK KAMPUS INTERACTIVE SELECTOR & DETAIL
 ---------------------------------------------------- */
-const CAMPUS_JALUR_DATA = {
+let CAMPUS_JALUR_DATA = {
   "uin": {
     "id": "uin",
     "num": "01",
@@ -2159,7 +2182,7 @@ function initJalurKampus() {
 // ==========================================
 // 11. KATALOG BEASISWA INDONESIA & BANDUNG
 // ==========================================
-const SCHOLARSHIPS_DATA = [
+let SCHOLARSHIPS_DATA = [
   // --- A. PEMERINTAH PUSAT (6) ---
   {
     id: 'kip-kuliah-merdeka',
@@ -3182,5 +3205,68 @@ function initBeasiswaCatalog() {
   });
 
   renderCards();
+}
+
+/* =====================================================
+   TRANSFORM FUNCTIONS: Sanity → app.js data format
+===================================================== */
+
+function _transformBeasiswa(items) {
+  const CATEGORY_LABELS = {
+    pusat: 'Pemerintah Pusat',
+    daerah: 'Pemerintah Daerah',
+    lembaga: 'Lembaga / Organisasi',
+    kampus: 'Kampus / Internal',
+  };
+  const DEFAULT_LOGO = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0f2e59" stroke-width="1.5"><path d="M12 3L2 9l10 6 10-6-10-6zM2 17l10 6 10-6M2 13l10 6 10-6"/></svg>');
+  return items.map(function(item) {
+    return {
+      id: item._id,
+      title: item.nama,
+      category: item.kategori,
+      categoryLabel: CATEGORY_LABELS[item.kategori] || item.kategori || '',
+      provider: item.penyelenggara || '',
+      logo: DEFAULT_LOGO,
+      level: '',
+      campuses: '',
+      benefit: item.deskripsi || '',
+      summary: item.deskripsi || '',
+      requirements: Array.isArray(item.syarat) ? item.syarat : [],
+      stages: Array.isArray(item.tahapan) ? item.tahapan : [],
+      officialUrl: item.linkResmi || '#',
+      deadlineNote: '',
+    };
+  });
+}
+
+function _transformJalurKampus(items) {
+  var result = {};
+  items.forEach(function(item) {
+    var id = item.kampusId || item._id;
+    var sanityLogo = (item.logo && window.Sanity) ? window.Sanity.imageUrl(item.logo) : null;
+    var localLogo = 'assets/logos/logo_' + id + '.png';
+    result[id] = {
+      id: id,
+      name: item.namaKampus,
+      short: item.namaKampus,
+      badge: item.badge || '',
+      logo: sanityLogo || localLogo,
+      location: item.lokasi || '',
+      shortDesc: item.deskripsi || '',
+      fullDesc: item.deskripsi || '',
+      portal: item.linkPortalPmb || null,
+      pathways: (item.jalur || []).map(function(j) {
+        return {
+          name: j.namaJalur,
+          tag: j.tipe || '',
+          schedule: j.jadwal || '',
+          desc: j.keterangan || '',
+          santriNote: null,
+          link: item.linkPortalPmb || '#',
+        };
+      }),
+    };
+  });
+  return result;
 }
 
