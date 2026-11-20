@@ -61,6 +61,14 @@
     return sanityFetch('*[_type == "jalurKampus"] | order(urutan asc) { _id, namaKampus, "kampusId": kampusId.current, badge, lokasi, deskripsi, linkPortalPmb, jalur, urutan, "logo": logo.asset._ref }');
   }
 
+  async function fetchPrestasi() {
+    return sanityFetch('*[_type == "prestasi" && tampilkan != false] | order(tanggal desc) { _id, nama, judul, kategori, keterangan, tanggal, "foto": foto.asset._ref }');
+  }
+
+  async function fetchKepengurusan() {
+    return sanityFetch('*[_type == "kepengurusan"] | order(tahun desc) { _id, periode, tahun, tema, "fotoBersama": fotoBersama.asset._ref, pengurus[]{ nama, jabatan, divisi, "foto": foto.asset._ref } }');
+  }
+
   async function fetchKiprahAlumni() {
     return sanityFetch('*[_type == "kiprahAlumni" && tampilkan != false] | order(urutan asc) { _id, nama, angkatan, peran, fotoPosition, "foto": foto.asset._ref }');
   }
@@ -82,6 +90,8 @@
 
   window.Sanity = {
     imageUrl,
+    fetchPrestasi,
+    fetchKepengurusan,
     fetchWarta,
     fetchGaleri,
     fetchPengurus,
