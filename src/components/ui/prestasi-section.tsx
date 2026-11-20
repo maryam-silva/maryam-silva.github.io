@@ -11,18 +11,11 @@ export interface PrestasiItem {
 }
 
 const FALLBACK: PrestasiItem[] = [
-  { _id: "p1", nama: "M. Rizqi Rehan Hamdillah", judul: "Juara 2 Musabaqah Qiraatil Kutub se-Bandung Raya", kategori: "lomba", keterangan: "Meraih Juara 2 dalam ajang Universal Milad Event (UME) 2026 kategori Musabaqah Qiraatil Kutub tingkat Bandung Raya.", tanggal: "2026-11-19" },
-  { _id: "p2", nama: "Diki Andriana", judul: "Kepala Kantor DPC PKB Kab. Bandung", kategori: "profesi", keterangan: "Alumni IKAPMI yang berhasil menjabat sebagai Kepala Kantor DPC PKB Kabupaten Bandung.", tanggal: "2025-01-10" },
-  { _id: "p3", nama: "Yeyen Hamidah, M.Pd.", judul: "Dosen Tetap Telkom University", kategori: "akademik", keterangan: "Berhasil menjadi dosen tetap di Universitas Telkom Bandung.", tanggal: "2024-08-01" },
+  { _id: "p1", nama: "M. Rizqi Rehan Hamdillah", judul: "Juara 2 Musabaqah Qiraatil Kutub se-Bandung Raya", kategori: "lomba", keterangan: "Universal Milad Event (UME) 2026 tingkat Bandung Raya.", tanggal: "2026-11-19" },
+  { _id: "p2", nama: "Ahmad Ghozie Ibrahim", judul: "Juara 1 Lomba Futsal Tingkat Nasional SILATWIL DPW ITHLA", kategori: "lomba", keterangan: "Lomba Futsal Tingkat Nasional pada acara SILATWIL DPW ITHLA.", tanggal: "2026-10-20" },
+  { _id: "p3", nama: "Muhammad Rizqi Rehan Hamdillah", judul: "Juara 2 Musabaqah Qiraatil Kutub Hari Santri Nasional 2026", kategori: "lomba", keterangan: "Hari Santri Nasional 2026 Se-Kota Bandung.", tanggal: "2026-10-20" },
+  { _id: "p4", nama: "Tim Inovasi IKAPMI Regional Bandung", judul: "Juara II Kompetisi Inovasi Bandung Bedas", kategori: "lomba", keterangan: "Kompetisi Inovasi Bandung Bedas oleh BAPPERIDA Kabupaten Bandung.", tanggal: "2026-07-01" },
 ];
-
-const KATEGORI: Record<string, { label: string; color: string; light: string; emoji: string }> = {
-  akademik:   { label: "Akademik",   color: "#15803d", light: "#dcfce7", emoji: "🎓" },
-  lomba:      { label: "Lomba",      color: "#c2410c", light: "#fff7ed", emoji: "🥇" },
-  organisasi: { label: "Organisasi", color: "#1d4ed8", light: "#eff6ff", emoji: "🏛️" },
-  profesi:    { label: "Profesi",    color: "#7e22ce", light: "#faf5ff", emoji: "💼" },
-  lainnya:    { label: "Lainnya",    color: "#475569", light: "#f1f5f9", emoji: "⭐" },
-};
 
 function sanityImageUrl(ref: string) {
   if (!ref) return "";
@@ -37,104 +30,220 @@ function formatTanggal(d?: string) {
   return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
 }
 
-// SVG ribbon medal decoration
-function RibbonMedal({ color, rank }: { color: string; rank: number }) {
+// Extract juara rank from title: "Juara 1", "Juara I", "Juara II" → "1", "2"
+function extractRank(judul: string): string {
+  const roman: Record<string, string> = { I: "1", II: "2", III: "3", IV: "4", V: "5" };
+  const matchRoman = judul.match(/[Jj]uara\s+([IVXivx]+)\b/);
+  if (matchRoman) return roman[matchRoman[1].toUpperCase()] ?? matchRoman[1];
+  const matchNum = judul.match(/[Jj]uara\s+(\d+)/);
+  if (matchNum) return matchNum[1];
+  return "🏆";
+}
+
+function MedalPin({ rank, shine }: { rank: string; shine: boolean }) {
   return (
-    <div className="absolute -top-2 right-5 z-10 flex flex-col items-center drop-shadow-lg" style={{ userSelect: "none" }}>
-      <div className="w-5 h-8 rounded-b-sm" style={{ background: color, opacity: 0.9 }} />
+    <div
+      style={{
+        position: "absolute",
+        top: -18,
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        zIndex: 10,
+        filter: shine ? "drop-shadow(0 0 10px rgba(15,46,89,0.5))" : "drop-shadow(0 2px 6px rgba(0,0,0,0.25))",
+        transition: "filter 0.3s ease",
+      }}
+    >
+      {/* Ribbon */}
+      <div style={{ width: 10, height: 22, background: "linear-gradient(180deg, #1a4a7a 0%, #0f2e59 100%)", borderRadius: "2px 2px 0 0" }} />
+      {/* Medal circle */}
       <div
-        className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm shadow-md"
-        style={{ background: `linear-gradient(135deg, #c98a2c 0%, #f5d485 50%, #c98a2c 100%)`, color: "#040a16", border: "2px solid #f5d485", marginTop: -6 }}
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          background: shine
+            ? "linear-gradient(135deg, #1e5fa0 0%, #3b82f6 40%, #1e5fa0 70%, #0f2e59 100%)"
+            : "linear-gradient(135deg, #0f2e59 0%, #1a4a7a 50%, #0f2e59 100%)",
+          border: "3px solid #fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: -4,
+          boxShadow: shine ? "0 0 0 3px rgba(59,130,246,0.3)" : "0 2px 8px rgba(0,0,0,0.3)",
+          transition: "background 0.3s ease, box-shadow 0.3s ease",
+        }}
       >
-        #{rank}
+        <span style={{ color: "#fff", fontWeight: 900, fontSize: rank.length > 1 ? 11 : 15, fontFamily: "monospace", letterSpacing: -1 }}>
+          {rank}
+        </span>
       </div>
     </div>
   );
 }
 
-function PrestasiCard({ item, rank }: { item: PrestasiItem; rank: number }) {
-  const k = KATEGORI[item.kategori || "lainnya"] || KATEGORI.lainnya;
-  const isEven = rank % 2 === 0;
+function PrestasiCard({ item }: { item: PrestasiItem }) {
+  const [hovered, setHovered] = React.useState(false);
+  const rank = extractRank(item.judul);
+
+  // Extract "Juara X" prefix separately for display
+  const judulMatch = item.judul.match(/^([Jj]uara\s+[IVXivx\d]+)\s+(.*)/i);
+  const judulRank = judulMatch ? judulMatch[1] : "";
+  const judulClean = judulMatch ? judulMatch[2] : item.judul;
 
   return (
     <div
-      className="relative flex flex-col rounded-2xl overflow-hidden group cursor-default"
       style={{
-        background: "#fff",
-        border: "1px solid rgba(15,46,89,0.08)",
-        boxShadow: "0 4px 24px rgba(15,46,89,0.08)",
-        transform: `rotate(${isEven ? "0.5" : "-0.5"}deg)`,
-        transition: "transform 0.35s cubic-bezier(.34,1.56,.64,1), box-shadow 0.35s ease",
-        marginTop: isEven ? "12px" : "0",
+        position: "relative",
+        paddingTop: 32,
+        cursor: "default",
       }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLDivElement;
-        el.style.transform = "rotate(0deg) translateY(-6px) scale(1.02)";
-        el.style.boxShadow = "0 20px 48px rgba(15,46,89,0.16)";
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLDivElement;
-        el.style.transform = `rotate(${isEven ? "0.5" : "-0.5"}deg)`;
-        el.style.boxShadow = "0 4px 24px rgba(15,46,89,0.08)";
-      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      {/* Top color bar */}
-      <div className="h-1.5 w-full" style={{ background: `linear-gradient(90deg, ${k.color}, #c98a2c)` }} />
+      <MedalPin rank={rank} shine={hovered} />
 
-      {/* Medal ribbon */}
-      <RibbonMedal color={k.color} rank={rank} />
-
-      {/* Photo / icon area */}
       <div
-        className="relative mx-4 mt-4 h-44 rounded-xl overflow-hidden flex items-center justify-center"
-        style={{ background: `linear-gradient(135deg, ${k.light}, #f8fafc)` }}
+        style={{
+          borderRadius: 20,
+          overflow: "hidden",
+          background: "#fff",
+          border: hovered ? "1.5px solid rgba(15,46,89,0.25)" : "1.5px solid rgba(15,46,89,0.08)",
+          boxShadow: hovered
+            ? "0 20px 50px rgba(15,46,89,0.18), 0 0 0 4px rgba(15,46,89,0.06)"
+            : "0 4px 20px rgba(15,46,89,0.07)",
+          transform: hovered ? "translateY(-8px) scale(1.025)" : "translateY(0) scale(1)",
+          transition: "transform 0.35s cubic-bezier(.34,1.56,.64,1), box-shadow 0.35s ease, border-color 0.3s ease",
+        }}
       >
-        {item.foto ? (
-          <img
-            src={sanityImageUrl(item.foto)}
-            alt={item.nama}
-            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <span className="text-6xl opacity-60 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">{k.emoji}</span>
-        )}
-        {/* Soft vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent" />
-      </div>
+        {/* Top accent stripe */}
+        <div style={{ height: 4, background: hovered ? "linear-gradient(90deg, #0f2e59, #3b82f6)" : "linear-gradient(90deg, #0f2e59, #1a4a7a)", transition: "background 0.4s ease" }} />
 
-      {/* Content */}
-      <div className="px-4 pb-5 pt-3 flex flex-col gap-2">
-        {/* Category chip */}
-        <span
-          className="self-start text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full transition-colors duration-200 group-hover:opacity-80"
-          style={{ background: k.light, color: k.color }}
+        {/* Photo area */}
+        <div
+          style={{
+            height: 220,
+            background: "linear-gradient(135deg, #e8f0fb 0%, #f0f4ff 100%)",
+            overflow: "hidden",
+            position: "relative",
+          }}
         >
-          {k.label}
-        </span>
-
-        <h3 className="font-bold text-[#0f2e59] text-sm leading-snug line-clamp-2 mt-0.5 transition-colors duration-200 group-hover:text-[#1a4a7a]">
-          {item.judul}
-        </h3>
-
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#c98a2c" }} />
-          <p className="text-[#b07820] text-xs font-semibold leading-tight">{item.nama}</p>
+          {item.foto ? (
+            <img
+              src={sanityImageUrl(item.foto)}
+              alt={item.nama}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "top",
+                transform: hovered ? "scale(1.08)" : "scale(1)",
+                transition: "transform 0.5s cubic-bezier(.25,.46,.45,.94)",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 56,
+                opacity: hovered ? 0.8 : 0.5,
+                transform: hovered ? "scale(1.1) rotate(-8deg)" : "scale(1) rotate(0deg)",
+                transition: "opacity 0.3s, transform 0.4s cubic-bezier(.34,1.56,.64,1)",
+              }}
+            >
+              🏆
+            </div>
+          )}
+          {/* Bottom fade */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(255,255,255,0.7) 0%, transparent 60%)" }} />
         </div>
 
-        {item.keterangan && (
-          <p className="text-slate-400 text-xs leading-relaxed line-clamp-2">{item.keterangan}</p>
-        )}
+        {/* Content */}
+        <div style={{ padding: "16px 18px 20px" }}>
+          {/* Name — big and prominent */}
+          <p
+            style={{
+              fontSize: 15,
+              fontWeight: 800,
+              color: hovered ? "#0f2e59" : "#1a3a6b",
+              lineHeight: 1.3,
+              margin: "0 0 10px 0",
+              transition: "color 0.2s",
+            }}
+          >
+            {item.nama}
+          </p>
 
-        {item.tanggal && (
-          <p className="text-slate-300 text-[11px] mt-1 pt-2 border-t border-slate-100">{formatTanggal(item.tanggal)}</p>
-        )}
+          {/* Divider */}
+          <div
+            style={{
+              height: 1.5,
+              background: hovered ? "linear-gradient(90deg, #0f2e59, transparent)" : "linear-gradient(90deg, rgba(15,46,89,0.15), transparent)",
+              marginBottom: 10,
+              transition: "background 0.3s",
+            }}
+          />
+
+          {/* Juara rank badge */}
+          {judulRank && (
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: 10,
+                fontWeight: 800,
+                color: "#fff",
+                background: hovered ? "linear-gradient(90deg,#0f2e59,#1a4a7a)" : "#1a4a7a",
+                borderRadius: 6,
+                padding: "2px 8px",
+                marginBottom: 6,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                transition: "background 0.3s",
+              }}
+            >
+              {judulRank}
+            </span>
+          )}
+
+          {/* Achievement */}
+          <p
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: hovered ? "#0f2e59" : "#475569",
+              lineHeight: 1.5,
+              margin: "0 0 8px 0",
+              transition: "color 0.2s",
+            }}
+          >
+            {judulClean}
+          </p>
+
+          {item.tanggal && (
+            <p style={{ fontSize: 10.5, color: "#94a3b8", margin: 0, fontFamily: "monospace" }}>
+              {formatTanggal(item.tanggal)}
+            </p>
+          )}
+        </div>
+
+        {/* Hover glow border */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: 20,
+            pointerEvents: "none",
+            boxShadow: hovered ? "inset 0 0 0 1.5px rgba(15,46,89,0.2)" : "none",
+            transition: "box-shadow 0.3s",
+          }}
+        />
       </div>
-
-      {/* Hover glow overlay */}
-      <div
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300"
-        style={{ boxShadow: `inset 0 0 0 1.5px ${k.color}30` }}
-      />
     </div>
   );
 }
@@ -165,13 +274,26 @@ export function PrestasiSection() {
 
   return (
     <section id="prestasi" className="scroll-mt-20 sm:scroll-mt-24 relative w-full overflow-hidden py-16 sm:py-24">
+      {/* Subtle background dots */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: "radial-gradient(circle, rgba(15,46,89,0.04) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          pointerEvents: "none",
+        }}
+      />
+
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-14 flex flex-col items-center text-center">
-          <div className="mb-3 flex items-center gap-2">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#c98a2c]" />
-            <span className="text-[#c98a2c] text-xs font-bold uppercase tracking-[0.2em]">Kebanggaan Keluarga</span>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#c98a2c]" />
+        <div className="mb-16 flex flex-col items-center text-center">
+          <div className="mb-3 flex items-center gap-3">
+            <div style={{ height: 1, width: 48, background: "linear-gradient(to right, transparent, #0f2e59)" }} />
+            <span style={{ color: "#0f2e59", fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+              Kebanggaan Keluarga
+            </span>
+            <div style={{ height: 1, width: 48, background: "linear-gradient(to left, transparent, #0f2e59)" }} />
           </div>
           <h2 className="font-extrabold text-2xl sm:text-4xl text-[#0f2e59] tracking-tight leading-snug">
             Jejak Prestasi
@@ -181,10 +303,10 @@ export function PrestasiSection() {
           </p>
         </div>
 
-        {/* Staggered grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 items-start">
-          {displayItems.map((item, i) => (
-            <PrestasiCard key={item._id} item={item} rank={i + 1} />
+        {/* Cards grid — narrower cards, max 4 cols but constrained width */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start" style={{ maxWidth: 960, margin: "0 auto" }}>
+          {displayItems.map((item) => (
+            <PrestasiCard key={item._id} item={item} />
           ))}
         </div>
       </div>
