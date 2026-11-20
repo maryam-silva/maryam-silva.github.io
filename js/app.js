@@ -3,6 +3,167 @@
  */
 
 /* ----------------------------------------------------
+   SANITY RENDER: BERANDA / HERO
+---------------------------------------------------- */
+function _renderBeranda(data) {
+  if (!data) return;
+  const serif = document.getElementById('hero-tagline-serif');
+  const plain = document.getElementById('hero-tagline-plain');
+  const lead = document.getElementById('hero-lead-text');
+  const statsBar = document.getElementById('hero-stats-bar');
+  if (serif && data.taglineSeries) serif.textContent = data.taglineSeries;
+  if (plain && data.taglinePlain) plain.textContent = data.taglinePlain;
+  if (lead && data.leadText) lead.textContent = data.leadText;
+  if (statsBar && data.stats && data.stats.length > 0) {
+    statsBar.innerHTML = data.stats.map(s => {
+      const color = s.warna === 'gold' ? 'text-accent-700' : 'text-brand-900';
+      return `<div class="rounded-xl bg-white/90 sm:bg-transparent border border-slate-200/80 sm:border-0 px-3.5 py-2.5 sm:p-0 shadow-[0_2px_10px_-4px_rgba(15,46,89,0.08)] sm:shadow-none">
+        <p class="text-[20px] min-[375px]:text-[22px] sm:text-3xl font-extrabold ${color} leading-tight tabular-nums">${s.angka}</p>
+        <p class="text-[12.5px] min-[375px]:text-[13px] sm:text-xs font-medium text-slate-600 mt-0.5 leading-snug">${s.label}</p>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ----------------------------------------------------
+   SANITY RENDER: TENTANG
+---------------------------------------------------- */
+function _renderTentang(data) {
+  if (!data) return;
+  const heading = document.getElementById('tentang-heading');
+  const paragraf = document.getElementById('tentang-paragraf');
+  if (heading && data.heading) heading.textContent = data.heading;
+  if (paragraf) {
+    const lines = [data.paragraf1, data.paragraf2].filter(Boolean);
+    if (lines.length > 0) {
+      paragraf.innerHTML = lines.map(p => `<p>${p}</p>`).join('');
+    }
+  }
+}
+
+/* ----------------------------------------------------
+   SANITY RENDER: KONTAK
+---------------------------------------------------- */
+function _renderKontak(data) {
+  if (!data) return;
+  const alamatEl = document.getElementById('kontak-alamat');
+  const titikEl = document.getElementById('kontak-titik-kumpul');
+  const igLink = document.getElementById('kontak-ig-link');
+  const igHandle = document.getElementById('kontak-ig-handle');
+  const waBtn = document.getElementById('kontak-wa-btn');
+  if (alamatEl && data.alamat) alamatEl.textContent = data.alamat;
+  if (titikEl && data.titikKumpul) titikEl.textContent = 'Titik Kumpul: ' + data.titikKumpul;
+  if (data.instagram) {
+    if (igLink) igLink.href = 'https://www.instagram.com/' + data.instagram + '/';
+    if (igHandle) igHandle.textContent = '@' + data.instagram;
+  }
+  if (waBtn && data.whatsapp) {
+    waBtn.href = "https://wa.me/" + data.whatsapp + "?text=Assalamu'alaikum%20Pengurus%20IKAPMI%20Bandung...";
+  }
+}
+
+/* ----------------------------------------------------
+   SANITY RENDER: WARTA
+---------------------------------------------------- */
+window._wartaCache = {};
+
+function _formatTanggal(dateStr) {
+  if (!dateStr) return '';
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const parts = dateStr.split('-');
+  if (parts.length < 3) return dateStr;
+  return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
+}
+
+function _portableTextToHtml(blocks) {
+  if (!blocks || !blocks.length) return '';
+  return blocks.map(block => {
+    if (block._type !== 'block') return '';
+    const text = (block.children || []).map(span => {
+      let t = (span.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      if (span.marks && span.marks.includes('em')) t = `<em>${t}</em>`;
+      if (span.marks && span.marks.includes('strong')) t = `<strong>${t}</strong>`;
+      return t;
+    }).join('');
+    if (block.style === 'blockquote') {
+      return `<blockquote class="p-4 my-4 border-l-4 border-[#0f2e59] bg-blue-50 text-blue-950 rounded-r-lg italic">${text}</blockquote>`;
+    }
+    return `<p class="mb-4">${text}</p>`;
+  }).join('');
+}
+
+const KATEGORI_LABEL = { kegiatan:'Kegiatan', pengumuman:'Pengumuman', prestasi:'Prestasi', agenda:'Agenda' };
+
+function _renderWartaSection(items) {
+  if (!items || !items.length) return;
+  window._wartaCache = {};
+  items.forEach(item => { window._wartaCache[item._id] = item; });
+
+  const featuredWrap = document.getElementById('warta-featured-wrap');
+  const grid = document.getElementById('warta-grid');
+  if (!featuredWrap || !grid) return;
+
+  const featured = items[0];
+  const rest = items.slice(1, 7);
+
+  const fotoFeatured = (featured.fotoCover && window.Sanity) ? window.Sanity.imageUrl(featured.fotoCover) : '';
+  const kategoriLabel = KATEGORI_LABEL[featured.kategori] || featured.kategori || 'Warta';
+  const tanggalFormatted = _formatTanggal(featured.tanggal);
+
+  featuredWrap.innerHTML = `
+    <article class="warta-featured warta-reveal mb-10 sm:mb-14 group cursor-pointer rounded-3xl overflow-hidden relative"
+      style="box-shadow: 0 20px 60px -16px rgba(8,19,38,0.22), 0 4px 16px rgba(8,19,38,0.08);">
+      <button class="read-article-btn absolute inset-0 w-full h-full z-10 cursor-pointer" data-article-id="${featured._id}"
+        aria-label="Buka artikel ${featured.judul}"></button>
+      <div class="relative aspect-[16/9] sm:aspect-[21/9] lg:aspect-[3/1] overflow-hidden bg-slate-900">
+        ${fotoFeatured ? `<img src="${fotoFeatured}" alt="${featured.judul}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]">` : `<div class="w-full h-full bg-gradient-to-br from-brand-900 to-brand-700"></div>`}
+        <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(4,10,22,0.92) 0%, rgba(4,10,22,0.55) 42%, rgba(4,10,22,0.08) 100%);"></div>
+      </div>
+      <div class="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10 z-[2]">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-400/20 text-amber-300 border border-amber-400/30">
+            <i data-lucide="star" class="w-2.5 h-2.5"></i> Pilihan Editor
+          </span>
+          ${tanggalFormatted ? `<span class="text-[11px] text-white/50 font-medium">${tanggalFormatted}</span><span class="text-white/30 text-xs">·</span>` : ''}
+          <span class="text-[11px] text-white/50 font-medium">${kategoriLabel}</span>
+        </div>
+        <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-snug tracking-tight mb-3 max-w-3xl transition-all duration-300 group-hover:text-amber-100">
+          ${featured.judul}
+        </h3>
+        ${featured.ringkasan ? `<p class="text-sm text-white/65 leading-relaxed max-w-2xl mb-4 hidden sm:block">${featured.ringkasan}</p>` : ''}
+        <span class="inline-flex items-center gap-2 text-xs font-bold text-white/80 group-hover:text-amber-300 transition-colors duration-200">
+          <span>Baca Selengkapnya</span>
+          <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/10 group-hover:bg-amber-400/20 transition-colors duration-200">
+            <i data-lucide="arrow-right" class="w-3 h-3"></i>
+          </span>
+        </span>
+      </div>
+    </article>`;
+
+  const delays = [0, 80, 160, 240, 320, 400];
+  grid.innerHTML = rest.map((item, i) => {
+    const foto = (item.fotoCover && window.Sanity) ? window.Sanity.imageUrl(item.fotoCover) : '';
+    const kat = KATEGORI_LABEL[item.kategori] || item.kategori || 'Warta';
+    const tgl = _formatTanggal(item.tanggal);
+    return `<article class="warta-card warta-reveal group cursor-pointer rounded-2xl overflow-hidden relative"
+      style="--warta-delay:${delays[i] || 0}ms; box-shadow:0 8px 32px -10px rgba(8,19,38,0.18);">
+      <button class="read-article-btn absolute inset-0 w-full h-full z-10" data-article-id="${item._id}" aria-label="Buka artikel ${item.judul}"></button>
+      <div class="relative aspect-[4/3] overflow-hidden bg-slate-900">
+        ${foto ? `<img src="${foto}" alt="${item.judul}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]">` : `<div class="w-full h-full bg-gradient-to-br from-brand-900 to-brand-700"></div>`}
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(4,10,22,0.90) 0%,rgba(4,10,22,0.45) 45%,rgba(4,10,22,0.05) 100%)"></div>
+      </div>
+      <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5 z-[2]">
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider text-white/80 border border-white/20 mb-2.5" style="background:rgba(255,255,255,0.1);backdrop-filter:blur(6px)">${kat}${tgl ? ' · ' + tgl : ''}</span>
+        <h3 class="text-[14px] sm:text-[15px] font-extrabold text-white leading-snug tracking-tight mb-2 group-hover:text-amber-100 transition-colors duration-200">${item.judul}</h3>
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/60 group-hover:text-amber-300 transition-colors duration-200">Baca <i data-lucide="arrow-right" class="w-3 h-3"></i></span>
+      </div>
+    </article>`;
+  }).join('');
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+/* ----------------------------------------------------
    SANITY RENDER: PELINDUNG
 ---------------------------------------------------- */
 function _renderPelindung(items) {
@@ -105,16 +266,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fetch Sanity data dan update sebelum init sections yang data-driven
   if (window.Sanity) {
     try {
-      const [beasiswaItems, jalurItems, kampusItems, pelindungItems] = await Promise.all([
+      const [beasiswaItems, jalurItems, kampusItems, pelindungItems, wartaItems, berandaData, tentangData, kontakData] = await Promise.all([
         window.Sanity.fetchBeasiswa(),
         window.Sanity.fetchJalurKampus(),
         window.Sanity.fetchKampus(),
         window.Sanity.fetchPelindung(),
+        window.Sanity.fetchWarta(),
+        window.Sanity.fetchBeranda(),
+        window.Sanity.fetchTentang(),
+        window.Sanity.fetchKontak(),
       ]);
       if (beasiswaItems && beasiswaItems.length > 0) SCHOLARSHIPS_DATA = _transformBeasiswa(beasiswaItems);
       if (jalurItems && jalurItems.length > 0) CAMPUS_JALUR_DATA = _transformJalurKampus(jalurItems);
       if (kampusItems && kampusItems.length > 0) _renderKampusCards(kampusItems);
       if (pelindungItems && pelindungItems.length > 0) _renderPelindung(pelindungItems);
+      if (wartaItems && wartaItems.length > 0) _renderWartaSection(wartaItems);
+      if (berandaData) _renderBeranda(berandaData);
+      if (tentangData) _renderTentang(tentangData);
+      if (kontakData) _renderKontak(kontakData);
     } catch (e) {
       // Gunakan data hardcode sebagai fallback
     }
@@ -903,59 +1072,53 @@ function initArticleModal() {
   const modal = document.getElementById('article-modal');
   const closeBtn = document.getElementById('article-modal-close');
   const modalContent = document.getElementById('article-modal-body');
-  const triggers = document.querySelectorAll('.read-article-btn');
 
-  triggers.forEach(trigger => {
-    trigger.addEventListener('click', (e) => {
-      e.preventDefault();
-      const articleId = trigger.getAttribute('data-article-id');
-      const data = articleData[articleId];
+  function openModal(data) {
+    if (!data || !modal || !modalContent) return;
+    const imgPosition = data.imagePosition ? data.imagePosition.replace('object-','') : 'center 30%';
+    const isContain = data.imageFit === 'contain';
+    modalContent.innerHTML = `
+      <div class="warta-modal-hero" style="${isContain ? 'background:#0a1628;' : ''}">
+        <img src="${data.image}" alt="${data.title}"
+          style="object-fit:${isContain ? 'contain' : 'cover'};object-position:${isContain ? 'center' : imgPosition};${isContain ? 'padding:12px 0;' : ''}">
+        ${isContain ? '' : '<div class="hero-grad"></div>'}
+        <div class="absolute bottom-3 left-4 z-10">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-bold uppercase tracking-wider text-white border border-white/25"
+            style="background:rgba(15,46,89,0.6);backdrop-filter:blur(8px);">${data.tag}</span>
+        </div>
+      </div>
+      <div style="padding:20px 22px 28px;">
+        <p class="text-[11px] text-slate-400 font-medium mb-2.5">${data.date} &middot; ${data.author}</p>
+        <h2 style="font-size:17px;font-weight:800;color:#0f172a;line-height:1.35;letter-spacing:-0.01em;margin-bottom:14px;">${data.title}</h2>
+        <div style="height:1px;background:linear-gradient(to right,rgba(15,46,89,0.2),rgba(203,213,225,0.5),transparent);margin-bottom:14px;"></div>
+        <div style="font-size:13.5px;color:#475569;line-height:1.75;">${data.content}</div>
+      </div>`;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if (window.lucide) window.lucide.createIcons();
+    modalContent.scrollTop = 0;
+  }
 
-      if (data && modal && modalContent) {
-        const imgPosition = data.imagePosition ? data.imagePosition.replace('object-','') : 'center 30%';
-        const isContain = data.imageFit === 'contain';
-
-        modalContent.innerHTML = `
-          <!-- Hero image -->
-          <div class="warta-modal-hero" style="${isContain ? 'background:#0a1628;' : ''}">
-            <img src="${data.image}" alt="${data.title}"
-              style="object-fit:${isContain ? 'contain' : 'cover'};object-position:${isContain ? 'center' : imgPosition};${isContain ? 'padding:12px 0;' : ''}">
-            ${isContain ? '' : '<div class="hero-grad"></div>'}
-            <!-- Tag badge on image -->
-            <div class="absolute bottom-3 left-4 z-10">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-bold uppercase tracking-wider text-white border border-white/25"
-                style="background:rgba(15,46,89,0.6);backdrop-filter:blur(8px);">
-                ${data.tag}
-              </span>
-            </div>
-          </div>
-
-          <!-- Article content -->
-          <div style="padding:20px 22px 28px;">
-
-            <!-- Meta -->
-            <p class="text-[11px] text-slate-400 font-medium mb-2.5">${data.date} &middot; ${data.author}</p>
-
-            <!-- Title -->
-            <h2 style="font-size:17px;font-weight:800;color:#0f172a;line-height:1.35;letter-spacing:-0.01em;margin-bottom:14px;">${data.title}</h2>
-
-            <!-- Divider -->
-            <div style="height:1px;background:linear-gradient(to right,rgba(15,46,89,0.2),rgba(203,213,225,0.5),transparent);margin-bottom:14px;"></div>
-
-            <!-- Body text -->
-            <div style="font-size:13.5px;color:#475569;line-height:1.75;">
-              ${data.content}
-            </div>
-
-          </div>
-        `;
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        // Re-init lucide icons inside modal
-        if (window.lucide) window.lucide.createIcons();
-        modalContent.scrollTop = 0;
-      }
-    });
+  // Event delegation — handles both static (hardcoded) and dynamic (Sanity-rendered) triggers
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.read-article-btn');
+    if (!trigger) return;
+    e.preventDefault();
+    const articleId = trigger.getAttribute('data-article-id');
+    const sanityItem = window._wartaCache && window._wartaCache[articleId];
+    if (sanityItem) {
+      openModal({
+        title: sanityItem.judul,
+        date: _formatTanggal(sanityItem.tanggal) || sanityItem.tanggal || '',
+        author: 'IKAPMI Regional Bandung',
+        tag: KATEGORI_LABEL[sanityItem.kategori] || sanityItem.kategori || 'Warta',
+        image: (sanityItem.fotoCover && window.Sanity) ? window.Sanity.imageUrl(sanityItem.fotoCover) : '',
+        content: _portableTextToHtml(sanityItem.isi),
+        imageFit: 'cover',
+      });
+    } else {
+      openModal(articleData[articleId]);
+    }
   });
 
   function closeModal() {

@@ -30,7 +30,7 @@
   }
 
   async function fetchWarta() {
-    return sanityFetch('*[_type == "warta"] | order(tanggal desc) { _id, judul, slug, tanggal, kategori, ringkasan, "fotoCover": fotoCover.asset._ref }');
+    return sanityFetch('*[_type == "warta"] | order(tanggal desc) { _id, judul, slug, tanggal, kategori, ringkasan, isi, "fotoCover": fotoCover.asset._ref }');
   }
 
   async function fetchGaleri() {
@@ -61,6 +61,21 @@
     return sanityFetch('*[_type == "jalurKampus"] | order(urutan asc) { _id, namaKampus, "kampusId": kampusId.current, badge, lokasi, deskripsi, linkPortalPmb, jalur, urutan, "logo": logo.asset._ref }');
   }
 
+  async function fetchBeranda() {
+    const result = await sanityFetch('*[_type == "beranda"][0] { taglineSeries, taglinePlain, leadText, stats }');
+    return Array.isArray(result) ? result[0] : result;
+  }
+
+  async function fetchTentang() {
+    const result = await sanityFetch('*[_type == "tentang"][0] { heading, paragraf1, paragraf2 }');
+    return Array.isArray(result) ? result[0] : result;
+  }
+
+  async function fetchKontak() {
+    const result = await sanityFetch('*[_type == "kontak"][0] { alamat, titikKumpul, instagram, whatsapp, email }');
+    return Array.isArray(result) ? result[0] : result;
+  }
+
   window.Sanity = {
     imageUrl,
     fetchWarta,
@@ -71,5 +86,8 @@
     fetchPelindung,
     fetchBeasiswa,
     fetchJalurKampus,
+    fetchBeranda,
+    fetchTentang,
+    fetchKontak,
   };
 })();

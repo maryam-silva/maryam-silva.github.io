@@ -251,8 +251,8 @@
           <!-- Main Distinctive Heading -->
           <h1
             class="text-[24px] min-[360px]:text-[26px] min-[375px]:text-[28px] sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-[-0.025em] leading-[1.15] mb-3 sm:mb-5">
-            <span class="font-serif italic font-normal text-brand-700 block sm:inline">Sadulur Ngahiji</span>
-            di Tatar Sunda.
+            <span id="hero-tagline-serif" class="font-serif italic font-normal text-brand-700 block sm:inline">Sadulur Ngahiji</span>
+            <span id="hero-tagline-plain">di Tatar Sunda.</span>
           </h1>
 
           <!-- Lead Paragraph (Fixed 2 Lines on Mobile) -->
@@ -277,7 +277,7 @@
           </div>
 
           <!-- Credibility Metrics Bar -->
-          <div
+          <div id="hero-stats-bar"
             class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-6 pt-5 sm:pt-6 border-t border-slate-200/80 w-full text-left">
             <div
               class="rounded-xl bg-white/90 sm:bg-transparent border border-slate-200/80 sm:border-0 px-3.5 py-2.5 sm:p-0 shadow-[0_2px_10px_-4px_rgba(15,46,89,0.08)] sm:shadow-none">
@@ -349,13 +349,13 @@
         <!-- Right: Story (Tersusun Rapi, Ringkas & Mudah Dibaca) -->
         <div class="lg:col-span-6 flex flex-col justify-center space-y-4 sm:space-y-5 max-w-xl mx-auto lg:mx-0">
 
-          <h3
+          <h3 id="tentang-heading"
             class="text-[22px] min-[375px]:text-2xl sm:text-3xl lg:text-[34px] xl:text-[36px] font-extrabold text-white tracking-tight leading-[1.25]">
             Bukan Sekadar Perkumpulan Alumni, Melainkan <span class="text-blue-300 font-serif italic">Rumah
               Pertama</span> di Perantauan.
           </h3>
 
-          <div class="text-slate-300 text-[15px] min-[375px]:text-[15.5px] sm:text-[17px] lg:text-[17.5px] leading-[1.7] space-y-3.5 sm:space-y-4">
+          <div id="tentang-paragraf" class="text-slate-300 text-[15px] min-[375px]:text-[15.5px] sm:text-[17px] lg:text-[17.5px] leading-[1.7] space-y-3.5 sm:space-y-4">
             <p>
               <strong class="text-white font-semibold">IKAPMI Regional Bandung</strong> adalah simpul keluarga bagi
               alumni <span class="text-slate-100 font-medium">Pesantren Modern Ummul Quro Al-Islami
@@ -1406,6 +1406,7 @@
       </div>
 
       <!-- FEATURED ARTICLE — full-bleed editorial card -->
+      <div id="warta-featured-wrap">
       <article class="warta-featured warta-reveal mb-10 sm:mb-14 group cursor-pointer rounded-3xl overflow-hidden relative"
         style="box-shadow: 0 20px 60px -16px rgba(8,19,38,0.22), 0 4px 16px rgba(8,19,38,0.08);">
         <button class="read-article-btn absolute inset-0 w-full h-full z-10 cursor-pointer" data-article-id="4"
@@ -1454,9 +1455,10 @@
           </span>
         </div>
       </article>
+      </div><!-- #warta-featured-wrap -->
 
       <!-- ARTICLE GRID — semua overlay style seperti featured -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      <div id="warta-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
 
         <!-- Article 5: Pengajian Yasin -->
         <article class="warta-card warta-reveal group cursor-pointer rounded-2xl overflow-hidden relative"
@@ -1667,10 +1669,10 @@
               </svg>
               <div>
                 <h3 class="text-sm font-semibold text-[#142B4D]">Alamat Sekretariat</h3>
-                <p class="text-xs sm:text-sm text-[#64748B] mt-0.5 leading-relaxed">
+                <p id="kontak-alamat" class="text-xs sm:text-sm text-[#64748B] mt-0.5 leading-relaxed">
                   Jl. A.H. Nasution No. 105, Cipadung, Kec. Cibiru, Kota Bandung, Jawa Barat 40614
                 </p>
-                <p class="text-xs font-medium text-[#142B4D] mt-1">
+                <p id="kontak-titik-kumpul" class="text-xs font-medium text-[#142B4D] mt-1">
                   Titik Kumpul: Kawasan Bandung Timur (Dekat Kampus UIN)
                 </p>
               </div>
@@ -1691,9 +1693,9 @@
                 <p class="text-xs sm:text-sm text-[#64748B] mt-0.5">
                   Ikuti informasi harian, dokumentasi acara, dan pengumuman di:
                 </p>
-                <a href="https://www.instagram.com/ikapmi.bandung/" target="_blank" rel="noopener noreferrer"
+                <a id="kontak-ig-link" href="https://www.instagram.com/ikapmi.bandung/" target="_blank" rel="noopener noreferrer"
                   class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#142B4D] hover:text-[#0d1e37] mt-1 underline underline-offset-4 transition-colors">
-                  <span>@ikapmi.bandung</span>
+                  <span id="kontak-ig-handle">@ikapmi.bandung</span>
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                       d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -1706,7 +1708,7 @@
 
           <!-- Prominent Tasteful WhatsApp Button -->
           <div class="pt-2">
-            <a href="https://wa.me/6281200000000?text=Assalamu'alaikum%20Pengurus%20IKAPMI%20Bandung..." target="_blank"
+            <a id="kontak-wa-btn" href="https://wa.me/6281200000000?text=Assalamu'alaikum%20Pengurus%20IKAPMI%20Bandung..." target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-2.5 px-6 h-12 rounded-lg bg-[#142B4D] hover:bg-[#0d1e37] text-white font-medium text-sm transition-colors focus:ring-2 focus:ring-[#142B4D] focus:ring-offset-2 outline-none cursor-pointer shadow-xs">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
