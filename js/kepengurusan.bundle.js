@@ -23611,7 +23611,7 @@
       ...cardBase,
       background: "linear-gradient(170deg,#0f1f3d 0%,#0a1628 60%,#060e1e 100%)",
       border: isChief ? "1.5px solid rgba(201,138,44,0.6)" : "1px solid rgba(255,255,255,0.07)",
-      boxShadow: isChief ? "0 12px 40px rgba(201,138,44,0.2), 0 4px 16px rgba(0,0,0,0.5)" : "0 8px 32px rgba(0,0,0,0.4)"
+      boxShadow: "0 8px 32px rgba(0,0,0,0.4)"
     } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.05) 1px,transparent 1px)", backgroundSize: "14px 14px" } }), /* @__PURE__ */ React.createElement("div", { style: {
       width: "100%",
       padding: "9px 10px 7px",
@@ -23622,7 +23622,7 @@
       borderBottom: `1px solid ${isChief ? "rgba(201,138,44,0.25)" : "rgba(255,255,255,0.06)"}`,
       position: "relative",
       zIndex: 1
-    } }, /* @__PURE__ */ React.createElement("div", { style: { width: 18, height: 18, borderRadius: "50%", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 10, height: 10, borderRadius: "50%", background: isChief ? "rgba(201,138,44,0.7)" : "rgba(147,197,253,0.5)" } })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 7.5, fontWeight: 900, letterSpacing: "0.1em", color: isChief ? "#c98a2c" : "rgba(255,255,255,0.5)", textTransform: "uppercase" } }, "IKAPMI BANDUNG")), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, marginTop: 16, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: {
+    } }, isDemisioner ? /* @__PURE__ */ React.createElement("span", { style: { fontSize: 7.5, fontWeight: 900, letterSpacing: "0.12em", color: "rgba(239,68,68,0.9)", textTransform: "uppercase", fontFamily: "monospace" } }, "\u2715 DEMISIONER") : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { width: 18, height: 18, borderRadius: "50%", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 10, height: 10, borderRadius: "50%", background: isChief ? "rgba(201,138,44,0.7)" : "rgba(147,197,253,0.5)" } })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 7.5, fontWeight: 900, letterSpacing: "0.1em", color: isChief ? "#c98a2c" : "rgba(255,255,255,0.5)", textTransform: "uppercase" } }, "IKAPMI BANDUNG"))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, marginTop: 16, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: {
       width: isChief ? 90 : 78,
       height: isChief ? 90 : 78,
       borderRadius: "50%",
@@ -23660,7 +23660,9 @@
       justifyContent: "center",
       gap: 12,
       padding: "20px 12px"
-    } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.035) 1px,transparent 1px)", backgroundSize: "11px 11px" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, width: 50, height: 50, borderRadius: "50%", border: `1.5px solid ${isChief ? "rgba(201,138,44,0.35)" : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.04)" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 24 } }, "\u{1F54C}")), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } }, p.divisi && /* @__PURE__ */ React.createElement("p", { style: { color: isChief ? "#c98a2c" : "#93c5fd", fontSize: 9, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 } }, p.divisi), /* @__PURE__ */ React.createElement("p", { style: { color: "#fff", fontSize: 12, fontWeight: 700, lineHeight: 1.4, marginBottom: 5 } }, p.nama), /* @__PURE__ */ React.createElement("p", { style: { color: "rgba(255,255,255,0.4)", fontSize: 9, lineHeight: 1.4 } }, p.jabatan)), isDemisioner && /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, border: "1px solid rgba(239,68,68,0.4)", borderRadius: 100, padding: "3px 12px", background: "rgba(239,68,68,0.08)" } }, /* @__PURE__ */ React.createElement("span", { style: { color: "rgba(239,68,68,0.8)", fontSize: 8, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" } }, "Periode Berakhir")), /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", bottom: 7, right: 8, fontSize: 8, color: "rgba(255,255,255,0.15)", zIndex: 2 } }, "\u21BB")))));
+    } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(45deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 10px)", backgroundSize: "10px 10px" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.055) 1px,transparent 1px)", backgroundSize: "18px 18px" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, width: 50, height: 50, borderRadius: "50%", border: `1.5px solid ${isChief ? "rgba(201,138,44,0.35)" : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.04)", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("img", { src: "assets/logo_ikapmi_hd.png", alt: "IKAPMI", style: { width: 36, height: 36, objectFit: "contain", opacity: 0.85 }, onError: (e) => {
+      e.currentTarget.style.display = "none";
+    } })), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, textAlign: "center" } }, p.divisi && /* @__PURE__ */ React.createElement("p", { style: { color: isChief ? "#c98a2c" : "#93c5fd", fontSize: 9, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 } }, p.divisi), /* @__PURE__ */ React.createElement("p", { style: { color: "#fff", fontSize: 12, fontWeight: 700, lineHeight: 1.4, marginBottom: 5 } }, p.nama), /* @__PURE__ */ React.createElement("p", { style: { color: "rgba(255,255,255,0.4)", fontSize: 9, lineHeight: 1.4 } }, p.jabatan)), isDemisioner && /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1, border: "1px solid rgba(239,68,68,0.4)", borderRadius: 100, padding: "3px 12px", background: "rgba(239,68,68,0.08)" } }, /* @__PURE__ */ React.createElement("span", { style: { color: "rgba(239,68,68,0.8)", fontSize: 8, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" } }, "Periode Berakhir")), /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", bottom: 7, right: 8, fontSize: 8, color: "rgba(255,255,255,0.15)", zIndex: 2 } }, "\u21BB")))));
   }
   function SectionDivider({ label, gold = false }) {
     const c = gold ? "rgba(201,138,44,0.5)" : "rgba(15,46,89,0.12)";
@@ -23668,9 +23670,17 @@
     return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 20 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, height: 1, background: `linear-gradient(90deg,${c},transparent)` } }), /* @__PURE__ */ React.createElement("span", { style: { color: tc, fontSize: 11, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase" } }, label), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, height: 1, background: `linear-gradient(270deg,${c},transparent)` } }));
   }
   function PengurusModal({ item, onClose, isCurrent }) {
+    React.useEffect(() => {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }, []);
     const grouped = groupByDivisi(item.pengurus || []);
-    const pimpinan = grouped["Pimpinan"] || grouped["Pimpinan Umum"] || [];
-    const lainnya = Object.keys(grouped).filter((k) => k !== "Pimpinan" && k !== "Pimpinan Umum");
+    const PIMPINAN_KEYS = ["Pimpinan", "Pimpinan Umum", "EX OFFICIO", "Pimpinan Inti", "Inti"];
+    const pimpinanKey = PIMPINAN_KEYS.find((k) => grouped[k]?.length) || null;
+    const pimpinan = pimpinanKey ? grouped[pimpinanKey] : (item.pengurus || []).filter((p) => /ketua umum|wakil ketua|sekretaris (umum|jenderal|jen)|bendahara umum/i.test(p.jabatan));
+    const lainnya = Object.keys(grouped).filter((k) => !PIMPINAN_KEYS.includes(k));
     const isDemisioner = !isCurrent;
     return /* @__PURE__ */ React.createElement(
       "div",
@@ -23697,15 +23707,22 @@
           "\u2715"
         ),
         /* @__PURE__ */ React.createElement("div", { style: {
-          background: "linear-gradient(160deg,#0f2e59,#1a4a7a)",
           borderRadius: "24px 24px 0 0",
           padding: "32px 24px 28px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           position: "relative",
-          overflow: "hidden"
-        } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px)", backgroundSize: "18px 18px" } }), /* @__PURE__ */ React.createElement("div", { style: {
+          overflow: "hidden",
+          minHeight: 220
+        } }, item.fotoBersama ? /* @__PURE__ */ React.createElement(
+          "img",
+          {
+            src: sanityImageUrl(item.fotoBersama),
+            alt: "",
+            style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }
+          }
+        ) : /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(160deg,#0f2e59,#1a4a7a)" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, background: item.fotoBersama ? "linear-gradient(180deg,rgba(4,10,22,0.55) 0%,rgba(4,10,22,0.75) 100%)" : "none" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px)", backgroundSize: "18px 18px" } }), /* @__PURE__ */ React.createElement("div", { style: {
           position: "relative",
           zIndex: 1,
           width: 76,
@@ -23728,8 +23745,13 @@
           borderRadius: 9999,
           padding: "4px 14px"
         } }, /* @__PURE__ */ React.createElement("span", { style: { color: "#fca5a5", fontSize: 11, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase" } }, "DEMISIONER"))),
-        item.fotoBersama && /* @__PURE__ */ React.createElement("div", { style: { padding: "16px 20px 0" } }, /* @__PURE__ */ React.createElement("img", { src: sanityImageUrl(item.fotoBersama), alt: item.periode, style: { width: "100%", height: 180, objectFit: "cover", borderRadius: 14, display: "block" } })),
-        /* @__PURE__ */ React.createElement("div", { style: { padding: "24px 20px 40px", display: "flex", flexDirection: "column", gap: 28 } }, pimpinan.length > 0 && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(SectionDivider, { label: "Pimpinan", gold: true }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 } }, pimpinan.map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isChief: true, isDemisioner })))), lainnya.map((divisi) => /* @__PURE__ */ React.createElement("div", { key: divisi }, /* @__PURE__ */ React.createElement(SectionDivider, { label: divisi }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 } }, grouped[divisi].map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isDemisioner }))))), (item.pengurus?.length || 0) === 0 && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "40px 0" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 36, opacity: 0.3 } }, "\u{1F4CB}"), /* @__PURE__ */ React.createElement("p", { style: { color: "#94a3b8", fontSize: 14, marginTop: 8 } }, "Data pengurus belum tersedia.")))
+        /* @__PURE__ */ React.createElement("div", { style: { padding: "24px 20px 40px", display: "flex", flexDirection: "column", gap: 28 } }, pimpinan.length > 0 && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement(SectionDivider, { label: "Pimpinan", gold: true }), (() => {
+          const ketua = pimpinan.filter((p) => /ketua umum/i.test(p.jabatan) && !/wakil/i.test(p.jabatan));
+          const wakil = pimpinan.filter((p) => /wakil/i.test(p.jabatan));
+          const seksben = pimpinan.filter((p) => /sekretaris|bendahara/i.test(p.jabatan));
+          const rest = pimpinan.filter((p) => !ketua.includes(p) && !wakil.includes(p) && !seksben.includes(p));
+          return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 12 } }, ketua.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", gap: 16 } }, ketua.map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isChief: true, isDemisioner }))), wakil.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", gap: 16 } }, wakil.map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isChief: true, isDemisioner }))), seksben.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" } }, seksben.map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isDemisioner }))), rest.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" } }, rest.map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isDemisioner }))));
+        })()), lainnya.map((divisi) => /* @__PURE__ */ React.createElement("div", { key: divisi }, /* @__PURE__ */ React.createElement(SectionDivider, { label: divisi }), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12 } }, grouped[divisi].map((p, i) => /* @__PURE__ */ React.createElement(BadgeCard, { key: i, p, isDemisioner }))))), (item.pengurus?.length || 0) === 0 && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "40px 0" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 36, opacity: 0.3 } }, "\u{1F4CB}"), /* @__PURE__ */ React.createElement("p", { style: { color: "#94a3b8", fontSize: 14, marginTop: 8 } }, "Data pengurus belum tersedia.")))
       )
     );
   }

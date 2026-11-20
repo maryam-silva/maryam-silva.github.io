@@ -99,9 +99,7 @@ function BadgeCard({ p, isChief = false, isDemisioner = false }: { p: PengurusIt
             ...cardBase,
             background: "linear-gradient(170deg,#0f1f3d 0%,#0a1628 60%,#060e1e 100%)",
             border: isChief ? "1.5px solid rgba(201,138,44,0.6)" : "1px solid rgba(255,255,255,0.07)",
-            boxShadow: isChief
-              ? "0 12px 40px rgba(201,138,44,0.2), 0 4px 16px rgba(0,0,0,0.5)"
-              : "0 8px 32px rgba(0,0,0,0.4)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
           }}>
             {/* dot pattern */}
             <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.05) 1px,transparent 1px)", backgroundSize: "14px 14px" }} />
@@ -114,13 +112,21 @@ function BadgeCard({ p, isChief = false, isDemisioner = false }: { p: PengurusIt
               borderBottom: `1px solid ${isChief ? "rgba(201,138,44,0.25)" : "rgba(255,255,255,0.06)"}`,
               position: "relative", zIndex: 1,
             }}>
-              {/* logo circle */}
-              <div style={{ width: 18, height: 18, borderRadius: "50%", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: 10, height: 10, borderRadius: "50%", background: isChief ? "rgba(201,138,44,0.7)" : "rgba(147,197,253,0.5)" }} />
-              </div>
-              <span style={{ fontSize: 7.5, fontWeight: 900, letterSpacing: "0.1em", color: isChief ? "#c98a2c" : "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
-                IKAPMI BANDUNG
-              </span>
+              {/* logo or demisioner stamp */}
+              {isDemisioner ? (
+                <span style={{ fontSize: 7.5, fontWeight: 900, letterSpacing: "0.12em", color: "rgba(239,68,68,0.9)", textTransform: "uppercase", fontFamily: "monospace" }}>
+                  ✕ DEMISIONER
+                </span>
+              ) : (
+                <>
+                  <div style={{ width: 18, height: 18, borderRadius: "50%", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: isChief ? "rgba(201,138,44,0.7)" : "rgba(147,197,253,0.5)" }} />
+                  </div>
+                  <span style={{ fontSize: 7.5, fontWeight: 900, letterSpacing: "0.1em", color: isChief ? "#c98a2c" : "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
+                    IKAPMI BANDUNG
+                  </span>
+                </>
+              )}
             </div>
 
             {/* photo */}
@@ -190,10 +196,12 @@ function BadgeCard({ p, isChief = false, isDemisioner = false }: { p: PengurusIt
             boxShadow: isChief ? "0 12px 40px rgba(201,138,44,0.15)" : "0 8px 32px rgba(0,0,0,0.4)",
             justifyContent: "center", gap: 12, padding: "20px 12px",
           }}>
-            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.035) 1px,transparent 1px)", backgroundSize: "11px 11px" }} />
+            {/* diagonal line pattern on back */}
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(45deg,rgba(255,255,255,0.03) 0px,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 10px)", backgroundSize: "10px 10px" }} />
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.055) 1px,transparent 1px)", backgroundSize: "18px 18px" }} />
 
-            <div style={{ position: "relative", zIndex: 1, width: 50, height: 50, borderRadius: "50%", border: `1.5px solid ${isChief ? "rgba(201,138,44,0.35)" : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.04)" }}>
-              <span style={{ fontSize: 24 }}>🕌</span>
+            <div style={{ position: "relative", zIndex: 1, width: 50, height: 50, borderRadius: "50%", border: `1.5px solid ${isChief ? "rgba(201,138,44,0.35)" : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.04)", overflow: "hidden" }}>
+              <img src="assets/logo_ikapmi_hd.png" alt="IKAPMI" style={{ width: 36, height: 36, objectFit: "contain", opacity: 0.85 }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
             </div>
 
             <div style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
@@ -231,9 +239,18 @@ function SectionDivider({ label, gold = false }: { label: string; gold?: boolean
 }
 
 function PengurusModal({ item, onClose, isCurrent }: { item: KepengurusanItem; onClose: () => void; isCurrent: boolean }) {
+  React.useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
   const grouped = groupByDivisi(item.pengurus || []);
-  const pimpinan = grouped["Pimpinan"] || grouped["Pimpinan Umum"] || [];
-  const lainnya = Object.keys(grouped).filter(k => k !== "Pimpinan" && k !== "Pimpinan Umum");
+  // Detect pimpinan: by divisi name OR by jabatan keywords (handles legacy "EX OFFICIO" divisi)
+  const PIMPINAN_KEYS = ["Pimpinan", "Pimpinan Umum", "EX OFFICIO", "Pimpinan Inti", "Inti"];
+  const pimpinanKey = PIMPINAN_KEYS.find(k => grouped[k]?.length) || null;
+  const pimpinan = pimpinanKey
+    ? grouped[pimpinanKey]
+    : (item.pengurus || []).filter(p => /ketua umum|wakil ketua|sekretaris (umum|jenderal|jen)|bendahara umum/i.test(p.jabatan));
+  const lainnya = Object.keys(grouped).filter(k => !PIMPINAN_KEYS.includes(k));
   const isDemisioner = !isCurrent;
 
   return (
@@ -257,14 +274,26 @@ function PengurusModal({ item, onClose, isCurrent }: { item: KepengurusanItem; o
           style={{ position: "absolute", top: 16, right: 16, zIndex: 20, width: 34, height: 34, borderRadius: "50%", background: "rgba(15,46,89,0.07)", border: "1px solid rgba(15,46,89,0.1)", color: "#0f2e59", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 13, fontWeight: 700 }}
         >✕</button>
 
-        {/* ── TOP HEADER: year badge centered, navy bg ── */}
+        {/* ── TOP HEADER: foto bersama as cover, navy overlay ── */}
         <div style={{
-          background: "linear-gradient(160deg,#0f2e59,#1a4a7a)",
           borderRadius: "24px 24px 0 0",
           padding: "32px 24px 28px",
           display: "flex", flexDirection: "column", alignItems: "center",
           position: "relative", overflow: "hidden",
+          minHeight: 220,
         }}>
+          {/* Cover photo or navy fallback */}
+          {item.fotoBersama ? (
+            <img
+              src={sanityImageUrl(item.fotoBersama)}
+              alt=""
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+            />
+          ) : (
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg,#0f2e59,#1a4a7a)" }} />
+          )}
+          {/* Dark overlay so text stays readable */}
+          <div style={{ position: "absolute", inset: 0, background: item.fotoBersama ? "linear-gradient(180deg,rgba(4,10,22,0.55) 0%,rgba(4,10,22,0.75) 100%)" : "none" }} />
           {/* dot pattern */}
           <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px)", backgroundSize: "18px 18px" }} />
 
@@ -297,22 +326,47 @@ function PengurusModal({ item, onClose, isCurrent }: { item: KepengurusanItem; o
           )}
         </div>
 
-        {/* foto bersama (optional) */}
-        {item.fotoBersama && (
-          <div style={{ padding: "16px 20px 0" }}>
-            <img src={sanityImageUrl(item.fotoBersama)} alt={item.periode} style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 14, display: "block" }} />
-          </div>
-        )}
-
         {/* ── CARDS CONTENT ── */}
         <div style={{ padding: "24px 20px 40px", display: "flex", flexDirection: "column", gap: 28 }}>
 
           {pimpinan.length > 0 && (
             <div>
               <SectionDivider label="Pimpinan" gold />
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 }}>
-                {pimpinan.map((p, i) => <BadgeCard key={i} p={p} isChief isDemisioner={isDemisioner} />)}
-              </div>
+              {/* Hierarchy: Ketua → Wakil → Sekretaris + Bendahara side by side */}
+              {(() => {
+                const ketua = pimpinan.filter(p => /ketua umum/i.test(p.jabatan) && !/wakil/i.test(p.jabatan));
+                const wakil = pimpinan.filter(p => /wakil/i.test(p.jabatan));
+                const seksben = pimpinan.filter(p => /sekretaris|bendahara/i.test(p.jabatan));
+                const rest = pimpinan.filter(p => !ketua.includes(p) && !wakil.includes(p) && !seksben.includes(p));
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                    {/* Row 1: Ketua */}
+                    {ketua.length > 0 && (
+                      <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
+                        {ketua.map((p, i) => <BadgeCard key={i} p={p} isChief isDemisioner={isDemisioner} />)}
+                      </div>
+                    )}
+                    {/* Row 2: Wakil */}
+                    {wakil.length > 0 && (
+                      <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
+                        {wakil.map((p, i) => <BadgeCard key={i} p={p} isChief isDemisioner={isDemisioner} />)}
+                      </div>
+                    )}
+                    {/* Row 3: Sekretaris + Bendahara side by side */}
+                    {seksben.length > 0 && (
+                      <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+                        {seksben.map((p, i) => <BadgeCard key={i} p={p} isDemisioner={isDemisioner} />)}
+                      </div>
+                    )}
+                    {/* Any remaining pimpinan */}
+                    {rest.length > 0 && (
+                      <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+                        {rest.map((p, i) => <BadgeCard key={i} p={p} isDemisioner={isDemisioner} />)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
 
