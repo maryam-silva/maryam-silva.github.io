@@ -2,11 +2,100 @@
  * IKAPMI Regional Bandung - Official Web Application Logic
  */
 
+/* ----------------------------------------------------
+   SANITY RENDER: PELINDUNG
+---------------------------------------------------- */
+function _renderPelindung(items) {
+  const container = document.getElementById('pelindung-cards');
+  if (!container) return;
+  const LOCAL_MAP = {
+    'Dr. KH. Saiful Falah, M.Pd.I': 'assets/pelindung/pelindung_saiful_falah.png',
+    'Ustadz Andri Noer Zaelani, M.Pd.': 'assets/pelindung/pelindung_andri_zaelani.png',
+    'Pipit Sugiarto, M.Pd.': 'assets/pelindung/pelindung_pipit_sugiarto.png',
+  };
+  container.innerHTML = items.map((item) => {
+    const isDark = item.temaTampilan !== 'light';
+    const fotoUrl = (item.foto && window.Sanity) ? (window.Sanity.imageUrl(item.foto) + '?fm=png') : (LOCAL_MAP[item.nama] || '');
+    const imgHtml = fotoUrl ? `<img src="${fotoUrl}" alt="${item.nama}" class="h-32 sm:h-44 md:h-56 lg:h-68 w-auto object-contain ${isDark ? 'pelindung-figure-shadow' : 'pelindung-figure-shadow-light'} select-none -mt-7 sm:-mt-10 md:-mt-14 transform transition-transform duration-300 group-hover:scale-105" loading="lazy">` : '';
+    if (isDark) {
+      return `<div class="relative w-full pt-8 sm:pt-11 md:pt-15 group">
+        <div class="relative w-full bg-gradient-to-r from-brand-900 via-brand-700 to-brand-800 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 pelindung-card-shadow bg-grid-inner-dark min-h-[90px] sm:min-h-[115px] md:min-h-[130px] flex items-center justify-between">
+          <div class="w-[58%] sm:w-[64%] md:w-[68%] z-10 text-left">
+            <h3 class="text-xs sm:text-base md:text-xl lg:text-2xl font-bold sm:font-extrabold text-white tracking-tight leading-tight">${item.nama}</h3>
+            <p class="text-blue-200 text-[10px] sm:text-xs md:text-sm font-medium tracking-wide mt-0.5 sm:mt-1 leading-snug">${item.jabatan}</p>
+          </div>
+          <div class="w-[40%] sm:w-[34%] md:w-[30%] flex justify-end z-20 pointer-events-none">${imgHtml}</div>
+        </div>
+      </div>`;
+    } else {
+      return `<div class="relative w-full pt-8 sm:pt-11 md:pt-15 group">
+        <div class="relative w-full bg-white text-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-7 pelindung-card-shadow border border-slate-200/90 bg-grid-inner-light min-h-[90px] sm:min-h-[115px] md:min-h-[130px] flex items-center justify-between">
+          <div class="w-[40%] sm:w-[34%] md:w-[30%] flex justify-start z-20 pointer-events-none">${imgHtml}</div>
+          <div class="w-[58%] sm:w-[64%] md:w-[68%] z-10 text-right">
+            <h3 class="text-xs sm:text-base md:text-xl lg:text-2xl font-bold sm:font-extrabold text-brand-700 tracking-tight leading-tight">${item.nama}</h3>
+            <p class="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium tracking-wide mt-0.5 sm:mt-1 leading-snug">${item.jabatan}</p>
+          </div>
+        </div>
+      </div>`;
+    }
+  }).join('');
+}
+
+/* ----------------------------------------------------
+   SANITY RENDER: KAMPUS CARDS
+---------------------------------------------------- */
+function _renderKampusCards(items) {
+  const grid = document.getElementById('campus-cards-grid');
+  if (!grid) return;
+  const FOTO_FALLBACK = {
+    'UIN SGD': 'assets/kampus/kampus_uin.jpg',
+    'ITB': 'assets/kampus/kampus_itb.jpg',
+    'Tel-U': 'assets/kampus/kampus_telkom.jpg',
+    'UNPAD': 'assets/kampus/kampus_unpad.jpg',
+    'UPI': 'assets/kampus/kampus_upi.jpg',
+  };
+  grid.innerHTML = items.map((item, i) => {
+    const fotoUrl = (item.foto && window.Sanity) ? window.Sanity.imageUrl(item.foto) : (FOTO_FALLBACK[item.singkatan] || (item.jenis === 'swasta' ? 'assets/kampus/kampus_swasta.jpg' : ''));
+    const num = String(i + 1).padStart(2, '0');
+    const keywords = [item.nama, item.singkatan, item.jenis, item.lokasi, item.badge, item.namaKoor].filter(Boolean).join(' ').toLowerCase();
+    const waUrl = item.kontakKoor ? `https://wa.me/${item.kontakKoor}?text=Halo%20Koor%20IKAPMI%20${encodeURIComponent(item.nama)}%20(${encodeURIComponent(item.namaKoor || '')})%2C%20saya%20alumni%20PMUQI...` : '';
+    const dotColor = item.jenis === 'negeri' ? 'bg-emerald-400' : 'bg-sky-400';
+    const ctaHtml = waUrl
+      ? `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md hover:shadow-amber-400/25 transition-all duration-300 hover:scale-[1.03] active:scale-95 group/btn shrink-0"><i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-900 fill-emerald-900/10"></i><span>Hubungi Koor</span><i data-lucide="arrow-right" class="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5"></i></a>`
+      : `<span class="text-[10px] text-white/40 italic">Koordinator belum tersedia</span>`;
+    return `<div class="campus-card campus-card-editorial group relative min-h-[305px] sm:min-h-[320px] p-5 sm:p-6 flex flex-col justify-between" data-category="${item.jenis}" data-campus="${item.jenis}" data-keywords="${keywords}">
+      ${fotoUrl ? `<img src="${fotoUrl}" alt="Kampus ${item.nama}" class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none" loading="lazy">` : `<div class="absolute inset-0 bg-gradient-to-br from-brand-800 to-brand-900 pointer-events-none"></div>`}
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-900/35 pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/70 via-transparent to-slate-950/40 pointer-events-none"></div>
+      <div class="campus-shimmer-layer"></div>
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <div class="font-serif text-2xl sm:text-3xl text-white/90 font-light tracking-tight leading-none drop-shadow-md mb-1.5">${num}</div>
+          <h3 class="font-serif text-lg sm:text-xl font-normal text-white tracking-tight leading-snug drop-shadow-md">${item.nama}</h3>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase text-white/95 bg-white/15 backdrop-blur-md border border-white/25 shadow-sm shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>
+          <span>${item.badge || (item.jenis === 'negeri' ? 'PTN' : 'PTS')}</span>
+        </div>
+      </div>
+      <div class="relative z-10 flex flex-col justify-end gap-2.5 pt-4 mt-auto">
+        <p class="text-xs text-slate-200/90 leading-relaxed drop-shadow line-clamp-2">${item.deskripsi || item.lokasi || ''}</p>
+        <div class="flex flex-wrap items-center gap-1.5">
+          ${item.namaKoor ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md border border-white/15 text-white/95 shadow-sm"><span class="w-1 h-1 rounded-full bg-amber-400"></span>Koor: ${item.namaKoor}</span>` : ''}
+          ${item.kontakKoor ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md border border-white/15 text-white/95 shadow-sm"><span class="w-1 h-1 rounded-full bg-emerald-400"></span>${item.kontakKoor.replace(/^62/, '0')}</span>` : ''}
+          ${item.lokasi ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md border border-white/15 text-white/95 shadow-sm"><span class="w-1 h-1 rounded-full bg-sky-400"></span>${item.lokasi}</span>` : ''}
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">${ctaHtml}</div>
+      </div>
+    </div>`;
+  }).join('');
+  if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   initNavbar();
   initHeroInteractiveCard();
   initOrgFilter();
-  initCampusFilter();
   initMentorshipTabs();
   initPerspectiveTunnelHero();
   initArticleModal();
@@ -16,21 +105,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fetch Sanity data dan update sebelum init sections yang data-driven
   if (window.Sanity) {
     try {
-      const [beasiswaItems, jalurItems] = await Promise.all([
+      const [beasiswaItems, jalurItems, kampusItems, pelindungItems] = await Promise.all([
         window.Sanity.fetchBeasiswa(),
         window.Sanity.fetchJalurKampus(),
+        window.Sanity.fetchKampus(),
+        window.Sanity.fetchPelindung(),
       ]);
-      if (beasiswaItems && beasiswaItems.length > 0) {
-        SCHOLARSHIPS_DATA = _transformBeasiswa(beasiswaItems);
-      }
-      if (jalurItems && jalurItems.length > 0) {
-        CAMPUS_JALUR_DATA = _transformJalurKampus(jalurItems);
-      }
+      if (beasiswaItems && beasiswaItems.length > 0) SCHOLARSHIPS_DATA = _transformBeasiswa(beasiswaItems);
+      if (jalurItems && jalurItems.length > 0) CAMPUS_JALUR_DATA = _transformJalurKampus(jalurItems);
+      if (kampusItems && kampusItems.length > 0) _renderKampusCards(kampusItems);
+      if (pelindungItems && pelindungItems.length > 0) _renderPelindung(pelindungItems);
     } catch (e) {
       // Gunakan data hardcode sebagai fallback
     }
   }
 
+  initCampusFilter();
   initBeasiswaCatalog();
   initJalurKampus();
 });
