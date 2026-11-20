@@ -161,6 +161,13 @@ function _renderWartaSection(items) {
   }).join('');
 
   if (window.lucide) window.lucide.createIcons();
+
+  // Re-observe new warta-reveal elements (initScrollAnimations ran before this HTML existed)
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.warta-reveal:not(.is-visible)').forEach(el => {
+      el.classList.add('is-visible');
+    });
+  });
 }
 
 /* ----------------------------------------------------
@@ -1077,21 +1084,29 @@ function initArticleModal() {
     if (!data || !modal || !modalContent) return;
     const imgPosition = data.imagePosition ? data.imagePosition.replace('object-','') : 'center 30%';
     const isContain = data.imageFit === 'contain';
+    const hasImage = !!data.image;
     modalContent.innerHTML = `
-      <div class="warta-modal-hero" style="${isContain ? 'background:#0a1628;' : ''}">
-        <img src="${data.image}" alt="${data.title}"
-          style="object-fit:${isContain ? 'contain' : 'cover'};object-position:${isContain ? 'center' : imgPosition};${isContain ? 'padding:12px 0;' : ''}">
-        ${isContain ? '' : '<div class="hero-grad"></div>'}
-        <div class="absolute bottom-3 left-4 z-10">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-bold uppercase tracking-wider text-white border border-white/25"
-            style="background:rgba(15,46,89,0.6);backdrop-filter:blur(8px);">${data.tag}</span>
+      <div style="position:relative;min-height:${hasImage ? '220px' : '0'};background:${hasImage ? 'transparent' : 'linear-gradient(160deg,#0f2e59,#1a4a7a)'};overflow:hidden;border-radius:inherit 0 0 inherit;">
+        ${hasImage ? `<img src="${data.image}" alt="${data.title}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:${isContain ? 'contain' : 'cover'};object-position:${isContain ? 'center' : imgPosition};${isContain ? 'padding:16px 0;background:#0a1628;' : ''}">` : ''}
+        ${hasImage && !isContain ? '<div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,10,22,0.2) 0%,rgba(4,10,22,0.72) 100%);"></div>' : ''}
+        <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 20px 18px;">
+          <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#fff;background:rgba(15,46,89,0.65);border:1px solid rgba(255,255,255,0.18);backdrop-filter:blur(8px);margin-bottom:8px;">${data.tag}</span>
+          <h2 style="font-size:18px;font-weight:800;color:#fff;line-height:1.3;letter-spacing:-0.01em;text-shadow:0 1px 8px rgba(0,0,0,0.4);margin:0;">${data.title}</h2>
         </div>
       </div>
-      <div style="padding:20px 22px 28px;">
-        <p class="text-[11px] text-slate-400 font-medium mb-2.5">${data.date} &middot; ${data.author}</p>
-        <h2 style="font-size:17px;font-weight:800;color:#0f172a;line-height:1.35;letter-spacing:-0.01em;margin-bottom:14px;">${data.title}</h2>
-        <div style="height:1px;background:linear-gradient(to right,rgba(15,46,89,0.2),rgba(203,213,225,0.5),transparent);margin-bottom:14px;"></div>
-        <div style="font-size:13.5px;color:#475569;line-height:1.75;">${data.content}</div>
+      <div style="padding:18px 22px 32px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0f2e59,#1a4a7a);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="color:#c98a2c;font-size:11px;font-weight:900;">I</span>
+          </div>
+          <div>
+            <p style="font-size:11.5px;font-weight:700;color:#0f2e59;margin:0;line-height:1.2;">${data.author}</p>
+            <p style="font-size:10.5px;color:#94a3b8;margin:0;">${data.date}</p>
+          </div>
+        </div>
+        <div style="height:1.5px;background:linear-gradient(to right,rgba(15,46,89,0.15),rgba(201,138,44,0.3),transparent);margin-bottom:16px;"></div>
+        <div style="font-size:14px;color:#334155;line-height:1.8;">${data.content}</div>
       </div>`;
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
