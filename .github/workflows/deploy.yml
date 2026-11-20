@@ -16,6 +16,8 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          security: loose
           server-dir: /public_html/
           state-name: .ftp-deploy-sync-state-v2.json
           exclude: |
