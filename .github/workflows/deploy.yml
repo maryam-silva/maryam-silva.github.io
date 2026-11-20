@@ -10,20 +10,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
-          protocol: ftps
-          security: loose
-          server-dir: /public_html/
-          state-name: .ftp-deploy-sync-state-v2.json
-          exclude: |
-            **/.git*
-            **/.git*/**
-            ikapmibandung-website/**
-            src/**
-            node_modules/**
-            *.zip
+      - name: Install lftp
+        run: sudo apt-get install -y lftp
+
+      - name: Deploy via lftp
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+        run: |
+          lftp -c "
+          set ssl:verify-certificate no;
+          set ftp:passive-mode true;
+          set net:timeout 60;
+          set net:max-retries 5;
+          set net:reconnect-interval-base 5;
+          open ftp://\$FTP_USER:\$FTP_PASS@\$FTP_HOST;
+          mirror --reverse --delete --verbose \
+            --exclude-glob .git \
+            --exclude-glob .github \
+            --exclude-glob ikapmibandung-website \
+            --exclude-glob src \
+            --exclude-glob node_modules \
+            --exclude-glob '*.zip' \
+            . /public_html/;
+          "
