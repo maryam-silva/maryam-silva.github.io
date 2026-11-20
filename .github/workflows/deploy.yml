@@ -25,8 +25,8 @@ jobs:
           set net:timeout 60;
           set net:max-retries 5;
           set net:reconnect-interval-base 5;
-          open ftp://\$FTP_USER:\$FTP_PASS@\$FTP_HOST;
-          mirror --reverse --delete --verbose \
+          open ftp://${FTP_USER}:${FTP_PASS}@${FTP_HOST};
+          mirror --reverse --verbose \
             --exclude-glob .git \
             --exclude-glob .github \
             --exclude-glob ikapmibandung-website \
